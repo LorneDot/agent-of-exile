@@ -200,8 +200,7 @@ Look up current omen names and effects on poe2db.tw → Omens. `[POE2DB]`
 The existence of these mechanics is confirmed from GGG trailers, but
 specific item names and interactions may differ from PoE1:
 
-- **Expedition currencies** — used with Expedition vendors for crafting
-- **Harvest lifeforce** — used at the Horticrafting Station for targeted rerolls
+- **Expedition currencies** — used with Expedition vendors for crafting (Rog, etc.)
 - **Breach catalysts** — add quality to jewelry, enhancing specific mod types
 - **Delirium orbs** — apply Delirium to maps for cluster jewel farming
 - **Fracturing orbs** — lock one mod permanently (unconfirmed in PoE2)
@@ -272,11 +271,11 @@ Each step uses a specific currency:
 4. Once you have the essence mod + 1-2 decent random mods, Regal → Exalt
 5. Essence mods cannot be removed by Scouring after the item is rare
 
-**Harvest crafting** (resist fixing, mid-budget):
-1. Use Harvest lifeforce at the Horticrafting Station
-2. Targeted reroll: "Reforge with a life modifier" guarantees one life mod
-3. Great for fixing resistances — "Reforge with a fire modifier" etc.
-4. More deterministic than Chaos Orbs for specific mod types
+**Expedition crafting** (deterministic, mid-budget, SSF-friendly):
+1. Use Expedition currency at vendors (primarily Rog for crafting)
+2. Rog offers items with specific mod types and can reroll them
+3. Tujen provides currency for further crafting
+4. More deterministic than Chaos Orbs for building specific items
 
 **Omen-assisted crafting** (high-budget, meta-crafting):
 1. Omen of Whittling: next currency removes the lowest-level mod instead
@@ -291,7 +290,7 @@ Each step uses a specific currency:
   dozens of times.
 - **Essences are king.** They're the most deterministic. Prioritize essence
   farming on the Atlas tree.
-- **Harvest is second.** Targeted rerolls save enormous currency.
+- **Expedition is second.** Rog crafting provides targeted items.
 - **Don't chase perfection.** A 4-mod item with the right mods clears all
   non-pinnacle content. The difference between 4-mod and 6-mod is usually
   a 15-20% power gain for 10× the cost.

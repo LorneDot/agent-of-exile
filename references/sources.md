@@ -40,7 +40,7 @@ developer statements about how systems work.
 | PoE2 gem data | PoE2DB → Gems | Web | Skill gems, support gems, spirit gems — tags, levels, requirements |
 | PoE2 unique items | PoE2DB → Uniques | Web | All unique items with stats and sources |
 | PoE2 mods | PoE2DB → Mods | Web | All modifiers, tiers, weights, slot restrictions |
-| PoE2 crafting | PoE2DB → Crafting | Web | Bench crafts, essence mods, harvest options |
+| PoE2 crafting | PoE2DB → Crafting | Web | Bench crafts, essence mods, expedition vendors |
 | PoE2 currencies | PoE2DB → Currencies | Web | All currency items, their effects, and mechanics |
 | PoE2 essences | PoE2DB → Essences | Web | Essence tiers, guaranteed mod types |
 | PoE2 omens | PoE2DB → Omens | Web | Meta-crafting items and their effects |
