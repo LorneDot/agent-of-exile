@@ -29,6 +29,8 @@ game files (poe2db.tw), or community-verified information.
 - "hardcore/SSF/league starter build"
 - "can you make [class] use [skill]?" (off-meta)
 - "meme build" / unconventional
+- "audit my [character]" / "improve my build" / "what should I upgrade?"
+- "look up my [class] on my account" / "analyze my PoE2 character"
 - Computing stats or generating a build file
 
 Don't use for: lore, boss guides, trade prices.
@@ -135,6 +137,56 @@ EHP/resist targets that may be wrong next patch.
 5. **Find the payoff** — why do this instead of the obvious class?
 6. **Be honest about viability** — meme-tier vs surprisingly good.
 7. **Cover defense gaps** — unconventional paths leave holes.
+
+### Entry F: Character Audit ("audit my Witch on my account")
+
+When the user wants to analyze and improve an existing character from
+their PoE2 account, fetch the live character data and suggest upgrades.
+
+**Prerequisites:** The user must provide their POESESSID cookie (from
+pathofexile.com → DevTools → Application → Cookies → POESESSID).
+Store it as `POESESSID` environment variable or pass via `--session`.
+
+1. **Fetch the character:**
+   ```bash
+   python scripts/fetch_character.py --account <name> --char <name>
+   ```
+
+2. **Parse the current state:**
+   - What level, class, ascendancy?
+   - What gear is equipped in each slot? (rarity, iLvl, sockets, links)
+   - What passives are allocated? (from `passives.hashes`)
+   - What gems are socketed? (from `items[].socketedItems`)
+
+3. **Compute current stats** from the fetched data using `calc_stats.py`
+   with the character's actual gear values extracted from the API response.
+
+4. **Identify gaps** — compare to what's expected for the level/content:
+   - Missing life/ES on gear slots?
+   - Unallocated jewel sockets?
+   - Low-level gems that need upgrading?
+   - Empty flask/charm slots?
+   - Resistances not capped for current content?
+   - Wasted passive nodes (inefficient pathing)?
+   - Support gems not matching main skill tags?
+
+5. **Suggest upgrades** — ordered by impact per cost:
+   - **Free wins:** allocate unused passives, swap gem levels, fix support
+     gem tags, use empty jewel sockets
+   - **Cheap upgrades:** essence-craft life/resists on worst rare piece,
+     buy level 20 gems, anoint amulet
+   - **Mid-budget:** replace worst-in-slot rare, add cluster jewel setup,
+     upgrade weapon
+   - **Expensive:** chase uniques, 6-link, double corrupt
+
+6. **For each suggestion, explain:** what to change, why, what source
+   confirms the improvement (poe2db.tw for mod availability), and
+   estimated cost (in chaos/divine or crafting materials).
+
+7. **Recompute stats** post-changes to show the delta.
+
+For the POESESSID: never log or display it. The user should set it as
+an environment variable: `export POESESSID=...`
 
 ## Generating the Build Output
 
