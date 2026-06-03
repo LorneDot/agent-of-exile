@@ -1,6 +1,6 @@
 ---
-name: poe2-theory-crafter
-description: "Use when the user asks to theory-craft, design, plan, or create a Path of Exile 2 build — from any starting point: a specific skill gem, a class, an ascendancy, a playstyle, or an unconventional off-meta concept. Computes character stats and outputs GGG-compatible build planner files. Sources mechanics from verified GGG data and poe2db, not memory."
+name: agent-of-exile
+description: "Use when the user asks to theory-craft, design, plan, audit, or create a Path of Exile 2 build. Agent of Exile sources mechanics from verified GGG data and poe2db, not memory. Computes character stats, imports live characters from the PoE2 API, and outputs GGG-compatible build planner files."
 version: 3.0.0
 author: Hermes Agent
 license: MIT
@@ -10,7 +10,7 @@ metadata:
     related_skills: []
 ---
 
-# PoE2 Theory Crafter
+# Agent of Exile
 
 ## Overview
 
