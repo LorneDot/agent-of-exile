@@ -1,7 +1,7 @@
 ---
 name: poe2-theory-crafter
-description: "Use when the user asks to theory-craft, design, plan, or create a Path of Exile 2 build — from any starting point: a specific skill gem, a class, an ascendancy, or a playstyle. Computes character stats (EHP, resists, DPS, mana) and outputs GGG-compatible build planner files. Covers SSF, hardcore, and all risk profiles."
-version: 2.0.0
+description: "Use when the user asks to theory-craft, design, plan, or create a Path of Exile 2 build — from any starting point: a specific skill gem, a class, an ascendancy, a playstyle, or an unconventional off-meta concept. Computes character stats (EHP, resists, DPS, mana) and outputs GGG-compatible build planner files."
+version: 2.1.0
 author: Hermes Agent
 license: MIT
 metadata:
@@ -36,6 +36,9 @@ Trigger on any of these:
 - "hardcore viable [archetype]"
 - "SSF league starter using [skill]"
 - "glass cannon [ascendancy] for bossing"
+- "can you make a [class] that uses [skill] work?" (unconventional / off-meta)
+- "is it possible to do [weird idea] in PoE2?"
+- "meme build" or "off-meta build"
 - User mentions PoE2 builds, passives, skill gems in a planning context
 - User asks to calculate stats, EHP, DPS for a build
 
@@ -110,29 +113,96 @@ they're using and follow the corresponding workflow.
 
 ### Entry D: Risk Profile / League Mode (applied on top of A/B/C)
 
-When the user specifies a risk profile or league mode, apply these constraints:
+When the user specifies a risk profile or league mode, use these as design
+guidelines — not hard requirements. PoE2's meta shifts with every league,
+and what was "tanky" in one patch may be "barely surviving" in the next.
+Treat these as directional preferences, not pass/fail gates.
 
-| Profile     | EHP Target   | Resists | Recovery            | Playstyle Notes                         |
-|------------|-------------|---------|---------------------|-----------------------------------------|
-| Glass Cannon | 3-4K at 80  | 75% ele | Leech or instant    | Kills before being killed. 6 portals.   |
-| Balanced     | 5-7K at 80  | 75%+    | Regen + leech       | Standard mapping.                       |
-| Tanky        | 8-12K at 80 | 80%+    | High regen + block  | Can eat hits. Slower clear.             |
-| Hardcore     | 10K+ at 80  | 80%+    | Multiple layers     | Overcap res for curses. Chaos res mandatory. |
-| SSF          | Gear-independent | —   | —                   | No build-enabling uniques unless target-farmable. |
+**Risk Profiles — design principles, not rules:**
 
-**Hardcore specifics** `[GGG-IG]`:
-- Chaos resistance must be positive (0% minimum, 30%+ preferred).
-- Overcap elemental resists by 20-30% for elemental weakness curses.
-- At least 2 defensive layers (e.g., armour + block, evasion + ES, MoM + regen).
+| Profile     | Direction | Playstyle Notes |
+|------------|-----------|-----------------|
+| Glass Cannon | Favor damage over defense. Accept dying occasionally. | Kills before being killed. Softcore only. May use 6-portal defense. |
+| Balanced     | Roughly even split between offense and defense. | Standard mapping. Can take some hits. |
+| Tanky        | Lean into defense. Accept slower clear speed. | Prioritizes not dying. Good for bossing, simulacrum, deep delve. |
+| Hardcore     | Maximum survivability. Every gear slot has life/ES. | Avoid ALL rippy content. Overcap resists. Multiple layered defenses. |
+
+These numbers shift with patches — use them as rough orientation, not
+pass/fail checks. If a new league doubles monster damage, double the EHP
+expectation. The principle ("hardcore means prioritize survival over all
+else") is what matters, not the specific number.
+
+**Hardcore design principles** `[GGG-IG]`:
+- Positive chaos resistance (typically 30%+ in current meta).
+- Overcap elemental resists for exposure/curses (how much depends on content).
+- At least 2 distinct defensive layers (armour + block, evasion + ES, MoM + regen, etc.).
 - Corrupted Blood immunity (jewel implicit or flask).
 - Freeze immunity (charm, ascendancy, or flask).
-- Prioritize life/ES on every gear piece over damage.
+- Life or ES on every gear piece. Damage-only items are a luxury.
 
-**SSF specifics:**
-- No trade-only uniques. Only boss-drop or divination-card-farmable items.
-- Prioritize deterministic crafting (essences, harvest, expedition).
-- More passives into defense since gear is weaker.
-- Generic damage scaling > specialized (easier to gear).
+**SSF design principles:**
+- Avoid trade-only uniques. Boss-drop, divination-card, or target-farmable items only.
+- Deterministic crafting over RNG (essences, harvest, expedition).
+- More passives into defense since gear will be weaker than trade league.
+- Generic damage scaling > highly specialized (easier to gear).
+
+### Entry E: Unconventional / Off-Meta ("make a melee Witch work")
+
+When the user wants to tie nonstandard mechanics together — a class using
+skills it wasn't designed for, a defensive archetype using an offensive
+ascendancy, or any build that violates normal PoE2 conventions:
+
+1. **Identify the core constraint** — what makes this unconventional?
+   - Wrong starting position on the tree (melee Witch starting in INT area)?
+   - Wrong attribute alignment (spellcaster Marauder with low INT)?
+   - Wrong ascendancy synergy (minion ascendancy with no minion skills)?
+   - Anti-synergy mechanics that somehow cancel out?
+
+2. **Find the bridge** — what mechanic allows this to work?
+   - **Unique items** that enable the playstyle (e.g., "Your strength provides
+     spell damage", specific conversion uniques).
+   - **Keystones** that flip normal rules (CI, MoM, Avatar of Fire, Blood
+     Magic, Iron Reflexes).
+   - **Ascendancy passives** with unusual synergies when combined across
+     mechanics.
+   - **Cluster jewels / timeless jewels** that provide access to mechanics
+     normally out of reach.
+   - **Gem interactions** — trigger gems, cast-on-X, weapon-swap tech.
+
+3. **Trace the tree path** — how do you get from the class start to the
+   relevant clusters? Is the travel cost worth it? What do you give up?
+
+4. **Calculate the tax** — unconventional builds often pay a heavy travel
+   or opportunity cost. Quantify it: "You'll spend ~20 extra passive points
+   traveling to the melee area, costing ~30% life and 40% damage compared
+   to a Warrior doing the same thing."
+
+5. **Find the payoff** — why do this instead of the conventional approach?
+   - Unique ascendancy synergy: "A melee Witch gets Infernalist's fire
+     damage scaling on her melee hits."
+   - Defensive advantage: "A spellcasting Marauder gets easy access to
+     endurance charges and armour."
+   - Novel mechanic: "Combining Gemling Legionnaire's gem quality bonus
+     with [skill] creates an interaction not possible on other classes."
+
+6. **Be honest about viability** — unconventional builds range from
+   "surprisingly good" to "meme-tier." Clearly state where this one falls
+   and what content it can realistically handle.
+
+7. **Design defense around the constraint** — the unconventional path
+   often leaves defense gaps. Be explicit about how you're covering them.
+
+**Examples of unconventional build bridges:**
+- Melee Witch → Infernalist fire damage applies to melee hits → fire-converted
+  attack skills.
+- Caster Marauder → Chieftain-esque fire spell scaling, strength-stacking
+  with unique that gives spell damage per strength.
+- Bow Sorceress → Stormweaver elemental scaling on bow attacks using flat
+  elemental damage from auras.
+- Minion Ranger → Deadeye projectile bonuses don't help minions directly,
+  but "minion damage affects you" or link skills could bridge it.
+- CI Duelist → Iron Reflexes + CI (travel heavy, but possible with unique
+  that grants ES from evasion).
 
 ## PoE2 Mechanics Reference
 
