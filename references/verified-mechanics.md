@@ -1,8 +1,11 @@
 # PoE2 Verified Mechanics
 
+**Current version: 0.5 "Return of the Ancients" / "Runes of Aldur" league**
+(Started 2026-05-29. Always check poe2db.tw for latest patch.)
+
 This file contains only mechanics that are confirmed from GGG sources.
-Load it with `skill_view(name='poe2-theory-crafter', file_path='references/verified-mechanics.md')`
-when the agent needs formula-level detail.
+Load it with your native file-reading tool when you need formula-level
+detail. (In Hermes: `skill_view(name='agent-of-exile', file_path='references/verified-mechanics.md')`)
 
 Do NOT load this file into context by default — load on demand when
 the agent needs specific formulas for stat calculation or build design.
@@ -302,6 +305,11 @@ Each step uses a specific currency:
 PoE2 introduces Runes as socketable items that go into gear sockets.
 This is separate from the skill gem system — gems have their own sockets
 in the gem menu. Gear sockets are for runes, soul cores, and similar items.
+
+**Current league (0.5 "Runes of Aldur"):** The league mechanic expands the
+rune system significantly with Runeforging, Runeseeker, Runeshape
+Combinations, and Kalguuran Skills. League-specific rune mechanics are
+temporary — always check poe2db.tw for current rune data.
 
 #### What Runes Are
 
