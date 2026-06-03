@@ -131,6 +131,94 @@ DoT: (Base + AddedFlat) × (1 + Σinc/100) × Π(1 + more/100) × (1 + DoT_multi
 - Default rate cap: 20% max life/sec, 20% max mana/sec
 - Leech instances stack up to the cap
 
+## Currency & Crafting Materials `[GGG-IG]` `[GGG-DEV]`
+
+This section establishes what currencies and crafting materials exist so
+the agent knows what to look up on poe2db.tw for specific mod pools, tier
+names, and current league availability.
+
+### Core Crafting Currencies
+
+These modify items directly. All confirmed `[GGG-IG]` unless noted.
+
+| Currency | Effect | Used for |
+|----------|--------|----------|
+| Orb of Transmutation | Upgrades normal → magic (1 mod) | First craft step on white bases |
+| Orb of Augmentation | Adds 1 mod to magic item (2nd mod) | Finishing magic items |
+| Regal Orb | Upgrades magic → rare (adds 1 mod, 3 total) | Making rares from good magic items |
+| Exalted Orb | Adds 1 random mod to rare item (up to 6) | Filling mod slots on rares |
+| Divine Orb | Rerolls numeric values of all mods within their tiers | Optimizing rolled values |
+| Chaos Orb | Rerolls all mods on a rare item (full reroll) | Salvaging or re-crafting rares |
+| Orb of Scouring | Removes all mods, returns item to normal rarity | Starting over on a base |
+| Orb of Alchemy | Upgrades normal → rare (4 random mods) | Quick rare from white base |
+| Vaal Orb | Corrupts item — adds implicit OR changes mods OR bricks | High-risk/high-reward final step |
+| Orb of Annulment | Removes 1 random mod from a rare | Removing bad mods before exalting |
+| Blessed Orb | Rerolls implicit modifier values | Fixing low implicit rolls |
+
+### Quality & Socket Currencies
+
+| Currency | Effect |
+|----------|--------|
+| Blacksmith's Whetstone | +1% quality on weapon (max 20%) |
+| Armourer's Scrap | +1% quality on armour (max 20%) |
+| Glassblower's Bauble | +1% quality on flasks (max 20%) |
+| Gemcutter's Prism | +1% quality on skill gems (max 20%) |
+| Jeweller's Orb | Rerolls number of sockets on item |
+| Orb of Fusing | Rerolls links between sockets |
+| Chromatic Orb | Rerolls socket colours |
+
+### Essences `[GGG-DEV]`
+
+Essences guarantee a specific mod type when used on a normal item. Each
+essence type corresponds to a mod category (e.g., fire damage, life,
+resists). Higher tiers (Whispering → Screaming → Shrieking → Deafening)
+provide higher-tier mods.
+
+PoE2 essence tiers and names may differ from PoE1. Look up current names
+on poe2db.tw → Essences. The principle is what matters: essences are
+targeted crafting for a specific mod type. `[POE2DB]`
+
+### Omens `[GGG-DEV]`
+
+Omens are meta-crafting items that modify the behavior of the next currency
+used. GGG has confirmed omens exist in PoE2 and serve as the replacement
+for PoE1's crafting bench in many cases. Examples of omen effects
+(verify specific names on poe2db.tw):
+
+- Remove the lowest-level modifier on next orb use
+- Force a specific mod type outcome
+- Reduce the risk of destroying an item on corruption
+- Influence socket outcomes
+
+Look up current omen names and effects on poe2db.tw → Omens. `[POE2DB]`
+
+### League-Specific Crafting Materials `[ESTIMATED]`
+
+The existence of these mechanics is confirmed from GGG trailers, but
+specific item names and interactions may differ from PoE1:
+
+- **Expedition currencies** — used with Expedition vendors for crafting
+- **Harvest lifeforce** — used at the Horticrafting Station for targeted rerolls
+- **Breach catalysts** — add quality to jewelry, enhancing specific mod types
+- **Delirium orbs** — apply Delirium to maps for cluster jewel farming
+- **Fracturing orbs** — lock one mod permanently (unconfirmed in PoE2)
+
+For current availability and specific item IDs: poe2db.tw → [league name].
+
+### Currency Usage in Build Planning
+
+When designing a build, mention currency/crafting only in terms of:
+
+1. **What materials are needed to craft key items** — "Use Shrieking Essence
+   of Greed on iLvl 82+ armour base for guaranteed life roll"
+2. **What the upgrade path costs** — "5-10 Exalts to finish this weapon
+   from an Essence base" (use general terms, not market prices)
+3. **What's realistic for the budget** — league starters use Essences and
+   basic orbs, not Omens and Divine chains
+
+Never quote orb:chaos ratios or market prices — those change hourly.
+Refer to poe2db.tw for crafting mod pools and currency mechanics.
+
 ## Where to Find Everything Else
 
 For item mods, gear tiers, gem data, unique items, crafting options, and
