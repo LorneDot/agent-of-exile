@@ -1,99 +1,83 @@
 # PoE2 Theory Crafter
 
-A Hermes Agent skill that theory-crafts Path of Exile 2 builds from any
-starting point — a skill gem, a class, an ascendancy, or a playstyle.
-Computes character stats (EHP, resists, DPS, mana) and outputs
-GGG-compatible build planner files you can import into the official planner.
+A Hermes Agent skill for designing Path of Exile 2 builds using **verified
+data sources**, not memorized mechanics. Sources every claim from GGG-published
+data, poe2db.tw (datamined game files), or community-verified resources.
 
 ## What it does
 
-- **Multi-entry design:** Start from a skill, class, ascendancy, or risk profile
-- **Stat calculation:** Computes life, ES, mana, resistances, armour reduction,
-  effective DPS, and effective HP using documented PoE2 formulas
-- **League-aware:** Optimizes for Softcore, Hardcore, SSF, or trade league
-- **Risk profiles:** Glass cannon, balanced, tanky, or HC-viable with explicit
-  survival targets
-- **Source-cited mechanics:** Every claim traced to GGG patch notes, in-game
-  tooltips, developer posts, or the official skill tree data
-- **GGG-compatible output:** Generates deflate+base64 encoded build strings
-  for the official PoE2 build planner
+- **Multi-entry design:** Skill-first, class-first, ascendancy-first, or off-meta
+- **Source-driven:** Every mechanic looked up from poe2db.tw, data.json, or
+  GGG documentation — never recited from stale memory
+- **Stat calculation:** Computes life, ES, mana, EHP, resists, armour reduction,
+  DPS estimates using formulas confirmed by GGG
+- **GGG-compatible output:** Generates importable build files for the official
+  PoE2 build planner
+- **League-aware design:** Risk profiles and SSF/HC as directional principles
+
+## Design Philosophy
+
+This skill does NOT hardcode PoE2 mechanics. Instead, it teaches the agent
+**where to look**:
+
+- **Skill tree data** → `data.json` from GGG's GitHub
+- **Gems, mods, uniques, crafting** → poe2db.tw
+- **Mechanics formulas** → on-demand reference file
+- **Patch notes & league content** → pathofexile2.com
+
+The 8.9KB SKILL.md is a workflow engine + source directory. It stays lean
+and never rots because it doesn't contain stale numbers.
 
 ## Quick Install
 
 ```bash
 git clone https://github.com/YOU/poe2-theory-crafter.git \
   ~/.hermes/skills/gaming/poe2-theory-crafter
-
 cd ~/.hermes/skills/gaming/poe2-theory-crafter/scripts
 python fetch_tree.py --force
 ```
 
 ## Usage
 
-Once installed, ask Hermes:
+"theory craft a Lightning Arrow Deadeye for mapping"
+→ Agent looks up Lightning Arrow on poe2db.tw, checks Deadeye passives,
+draws tree path from Ranger start, selects supports by tags, looks up
+bow/quiver mods, computes stats, generates build.txt.
 
-> "Theory craft a Lightning Arrow Deadeye for mapping — balanced risk"
-
-> "I want a build using Fireball. SSF viable."
-
-> "Design a hardcore Infernalist build with good survivability"
-
-The agent will:
-1. Analyze the entry point (skill-first, class-first, ascendancy-first)
-2. Load the 5,102-node skill tree data
-3. Design passives, skill gems, supports, and gear
-4. Compute stats with `calc_stats.py`
-5. Generate an importable `build.txt` + human-readable summary
-
-### Standalone Scripts
-
-```bash
-# Fetch/update tree data
-python scripts/fetch_tree.py --force
-
-# Generate a build from a JSON spec
-python scripts/generate_build.py examples/example_build.json -o build.txt
-
-# See the raw XML
-python scripts/generate_build.py examples/example_build.json --xml
-
-# Decode a build string back to XML
-python scripts/build_codec.py decode build.txt
-
-# Compute character stats from a build spec
-python scripts/calc_stats.py examples/example_build.json --detail
-```
+"make a melee Witch work somehow"
+→ Agent identifies the constraint (INT start, melee = STR area), finds
+bridges (Infernalist fire scaling on attacks? Unique conversion item?),
+calculates the travel tax, honestly rates viability.
 
 ## Project Structure
 
 ```
 poe2-theory-crafter/
-├── SKILL.md              # Hermes skill (mechanics, workflows, formulas)
-├── README.md             # This file
+├── SKILL.md                        # Workflow engine (216 lines)
+├── README.md
 ├── scripts/
-│   ├── build_codec.py    # Encode/decode GGG build format
-│   ├── fetch_tree.py     # Fetch & cache skill tree data
-│   ├── generate_build.py # JSON spec → GGG build file
-│   └── calc_stats.py     # Character stat calculator (EHP, DPS, resists)
+│   ├── fetch_tree.py               # Cache GGG skill tree data
+│   ├── build_codec.py              # Encode/decode GGG build format
+│   ├── generate_build.py           # JSON spec → importable file
+│   └── calc_stats.py               # Character stat calculator
 ├── references/
-│   ├── build-format.md   # GGG build XML schema
-│   └── skill-tree-format.md  # Tree JSON schema
+│   ├── sources.md                  # Complete source directory
+│   ├── verified-mechanics.md       # Only GGG-confirmed formulas
+│   ├── build-format.md             # GGG build XML schema
+│   └── skill-tree-format.md        # Tree JSON schema
 └── examples/
-    └── example_build.json    # Sample spec
+    └── example_build.json
 ```
 
-## Build Format
+## Verified Data Sources
 
-```
-XML → Deflate (zlib) → Base64 (URL-safe) → Import String
-```
-
-Reverse-engineered from the Maxroll planner. See `references/build-format.md`.
-
-## Skill Tree Data
-
-GGG publishes the 5,102-node PoE2 passive tree at:
-[grindinggear/poe2-skilltree-export](https://github.com/grindinggear/poe2-skilltree-export)
+| Source | What it provides | Tag |
+|--------|-----------------|-----|
+| `grindinggear/poe2-skilltree-export` | Classes, nodes, ascendancies, tree layout | `[TREE]` |
+| `poe2db.tw` | Gems, mods, uniques, crafting, item bases | `[POE2DB]` |
+| `pathofexile2.com` | Patch notes, league content | `[GGG-PN]` |
+| GGG developer posts | Mechanics explanations, formulas | `[GGG-DEV]` |
+| Maxroll PoE2 planner (JS) | GGG build format | Reverse-engineered |
 
 ## Requirements
 
