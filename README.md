@@ -1,9 +1,9 @@
 # Agent of Exile
 
-A Hermes Agent skill for designing Path of Exile 2 builds using **verified
-data sources**, not memorized mechanics. Imports live characters from the
-PoE2 API, sources every claim from GGG-published data or poe2db.tw, and
-outputs GGG-compatible build planner files.
+A **harness-agnostic** agent instruction set for designing Path of Exile 2
+builds using verified data sources, not memorized mechanics. Works with
+Hermes, OpenClaw, Claude Code, Codex, or any agent that can run Python
+scripts and read files.
 
 ## What it does
 
@@ -34,11 +34,22 @@ and never rots because it doesn't contain stale numbers.
 ## Quick Install
 
 ```bash
-git clone https://github.com/YOU/agent-of-exile.git \
-  ~/.hermes/skills/gaming/agent-of-exile
-cd ~/.hermes/skills/gaming/agent-of-exile/scripts
+# Clone the repo
+git clone https://github.com/YOU/agent-of-exile.git ~/workspace/agent-of-exile
+cd ~/workspace/agent-of-exile/scripts
+
+# One-time: fetch PoE2 skill tree data
 python fetch_tree.py --force
 ```
+
+**Per-harness setup:**
+
+- **Hermes:** `cp -r ~/workspace/agent-of-exile ~/.hermes/skills/gaming/agent-of-exile`
+  (Skill auto-loads on trigger. See `adapters/hermes.md`.)
+- **OpenClaw:** Add `SKILL.md` path to workspace project context.
+  (See `adapters/openclaw.md`.)
+- **Claude Code / Codex / standalone:** No setup needed. Read SKILL.md as
+  system prompt and run scripts directly.
 
 ## Usage
 

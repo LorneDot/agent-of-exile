@@ -15,11 +15,44 @@ metadata:
 ## Overview
 
 Design Path of Exile 2 builds using verified data sources, not memorized
-mechanics. This skill teaches a workflow for theory-crafting builds from
-any entry point, sourcing every claim from GGG-published data, datamined
-game files (poe2db.tw), or community-verified information.
+mechanics. This is a **harness-agnostic agent instruction set** — it works
+with Hermes, OpenClaw, Claude Code, Codex, or any agent that can run
+Python scripts and read files.
 
 **Core principle:** Never recite mechanics from memory. Look them up.
+
+## Harness Compatibility
+
+This skill uses plain Python scripts + markdown references. No harness-specific
+dependencies. For integration details per harness, see the adapter files:
+
+| Harness | Adapter | How to use |
+|---------|---------|------------|
+| Hermes Agent | `adapters/hermes.md` | Install to `~/.hermes/skills/gaming/agent-of-exile/` |
+| OpenClaw | `adapters/openclaw.md` | Load as project context in workspace |
+| Claude Code | Use directly | Read SKILL.md as system prompt, run scripts/ with Bash tool |
+| Codex CLI | Use directly | Read SKILL.md, use terminal for scripts |
+| Standalone | Use directly | Read SKILL.md, execute scripts with `python scripts/...` |
+
+### How to load references (harness-agnostic)
+
+Each harness has its own way to read files. The skill references these files:
+
+| Reference | Path | When to load |
+|-----------|------|-------------|
+| Source directory | `references/sources.md` | First session, to learn where to look |
+| Verified mechanics | `references/verified-mechanics.md` | On demand, when formulas needed |
+| Build format | `references/build-format.md` | When generating output |
+| Skill tree format | `references/skill-tree-format.md` | When navigating data.json |
+
+**In any harness:** read these files with your native file-reading tool
+when you need the information. Don't load all of them into context at
+once — load on demand.
+
+**Hermes-specific:** use `skill_view(name='agent-of-exile', file_path='references/...')`
+**OpenClaw-specific:** see `adapters/openclaw.md`
+**Claude Code/Codex:** use your native `Read` tool or `cat` via terminal
+**Standalone:** `cat references/sources.md`
 
 ## When to Use
 
@@ -47,18 +80,12 @@ Every claim must be sourced. Here's how to find information:
 | Unique items (stats, drop sources) | poe2db.tw → Uniques | `[POE2DB]` |
 | Crafting (essences, omens, bench crafts) | poe2db.tw → Crafting | `[POE2DB]` |
 | Item bases (requirements, implicits) | poe2db.tw → Items | `[POE2DB]` |
-| Mechanics formulas (life, damage, resists) | `skill_view(file_path='references/verified-mechanics.md')` | `[GGG-IG]` |
+| Mechanics formulas (life, damage, resists) | `references/verified-mechanics.md` | `[GGG-IG]` |
 | Patch notes, league content | pathofexile2.com | `[GGG-PN]` |
 | Developer statements | PoE forum / GGG tracker | `[GGG-DEV]` |
 | Atlas passive tree | `grindinggear/atlastree-export` | `[ATLAS]` |
 
 Load `references/sources.md` for the complete source directory.
-
-**Load verified mechanics on demand only.** Don't load the full mechanics
-reference into context unless the agent needs specific formulas. Use:
-```
-skill_view(name='poe2-theory-crafter', file_path='references/verified-mechanics.md')
-```
 
 **Golden rule:** If you can't find a source for a claim, mark it `[ESTIMATED]`.
 PoE1 knowledge is NOT PoE2 knowledge without explicit GGG confirmation.
