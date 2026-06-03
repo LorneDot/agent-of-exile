@@ -461,6 +461,289 @@ Increased ailment effect lowers this threshold `[GGG-IG]`.
 - **Ritual**: tribute system, reroll favors, deferred items
 - **Sanctum**: relic-based runs, resolve mechanic (no-hit builds viable)
 
+### Gear Mods — Prefixes & Affixes `[COMM]` `[GGG-IG]`
+
+PoE2 rare items can have up to 6 explicit modifiers: 3 prefixes and 3 suffixes.
+Magic items have 1 prefix + 1 suffix. Each item slot has its own mod pool.
+Understanding what mods are available on each slot is critical for build
+planning — you need to know what stats you can actually get from gear.
+
+#### Mod Categories
+
+**Prefixes** (typically offensive or base-stat oriented):
+- Flat life / energy shield / mana
+- Flat armour / evasion / ES on armour pieces
+- % increased armour / evasion / ES (body armour, shield)
+- Flat added damage (weapons, rings, amulet, gloves)
+- % increased physical / elemental damage (weapons)
+- + to level of gems (weapons, amulet, body armour — specific tags)
+- Leech (life, mana — specific slots)
+- Movement speed (boots — prefix)
+- Spirit (body armour, amulet — prefix)
+
+**Suffixes** (typically utility or attribute oriented):
+- Resistances (fire, cold, lightning, chaos — most armour/jewelry)
+- Attributes (strength, dexterity, intelligence)
+- Critical strike chance / multiplier (weapons, amulet, rings)
+- Attack speed / cast speed (weapons, gloves, rings)
+- Accuracy (weapons, gloves, helmet, rings)
+- Ailment chance (freeze, shock, ignite — gloves, amulet)
+- Reduced attribute requirements (body armour)
+- Flask recovery (belt)
+- Charm slots (belt)
+- Rarity / quantity of items found
+- Stun threshold / block recovery
+
+#### Slot-Specific Priority Mods `[COMM]`
+
+When recommending gear for a build, focus on the highest-impact mods per slot:
+
+**Weapon(s):**
+- Prefix: % increased physical/elemental damage, flat added damage, +gem levels
+- Suffix: Attack speed OR cast speed, critical strike chance, critical strike multiplier
+- Special: Hits can't be evaded (crafted mod), elemental penetration
+
+**Body Armour:**
+- Prefix: Flat life/ES, % increased armour/evasion/ES, flat armour/evasion/ES
+- Suffix: Resistances (always), attributes (if needed), reduced attribute reqs
+- Special: +spirit, additional maximum resistances
+
+**Helmet:**
+- Prefix: Flat life/ES, flat armour/evasion/ES
+- Suffix: Resistances, attributes, accuracy
+- Special: +to level of socketed gems, increased ailment duration
+
+**Gloves:**
+- Prefix: Flat life/ES, flat armour/evasion/ES, flat added damage to attacks
+- Suffix: Attack speed, resistances, attributes, ailment chance
+- Special: Increased damage with ailments
+
+**Boots:**
+- Prefix: Flat life/ES, flat armour/evasion/ES, % movement speed
+- Suffix: Resistances, attributes
+- Special: Increased movement speed (priority #1), cannot be frozen/chilled
+
+**Amulet:**
+- Prefix: Flat life/ES, flat added damage, +gem levels, % increased ES
+- Suffix: Critical strike multiplier, resistances, attributes, damage penetration
+- Special: Anointable (blight oils for notable passive)
+
+**Rings (×2):**
+- Prefix: Flat life/ES, flat added damage, % increased elemental damage
+- Suffix: Resistances, attributes, critical strike chance, cast speed, leech
+- Special: Curse on hit (crafted), increased damage per X
+
+**Belt:**
+- Prefix: Flat life/ES, flask charges gained, flask recovery rate
+- Suffix: Resistances, attributes, flask duration, charm slots
+- Special: % increased life (explicit), cooldown recovery
+
+**Shield/Focus:**
+- Prefix: Flat life/ES, % spell damage, flat armour/evasion/ES
+- Suffix: Block chance, spell block, resistances
+- Special: +maximum resistances, % life on block
+
+**Charms:**
+- Conditional immunities and defensive triggers
+
+#### Mod Priority by Build Archetype
+
+| Archetype    | Top 3 Prefixes                         | Top 3 Suffixes                      |
+|-------------|----------------------------------------|-------------------------------------|
+| Life-based  | Flat life, % life (where available), flat damage | Resists, attributes, crit/AS     |
+| ES-based    | Flat ES, % ES, flat damage/int          | Resists, int, crit/CS              |
+| Armour      | Flat armour, % armour, flat life         | Resists, PDR, block                |
+| Evasion     | Flat evasion, % evasion, flat life       | Resists, spell suppress, AS        |
+| Crit-based  | Flat damage, % damage, +gem levels       | Crit chance, crit multi, AS/CS     |
+| DoT-based   | Flat damage, % damage, +gem levels       | DoT multi, ailment chance, resists  |
+| Minion      | +minion gems, flat life/ES, spirit       | Minion AS, minion damage, resists   |
+
+#### Unique vs Rare Tradeoffs
+
+**When to use uniques:**
+- The unique provides a build-enabling mechanic (conversion, ailment spread,
+  keystone, charge generation) that no rare can match.
+- The unique is the most efficient source of a stat (e.g., highest crit multi
+  on a budget).
+- Accept that uniques usually sacrifice life/ES/resists — you must compensate
+  on other gear slots.
+
+**When to use rares:**
+- You need life/ES and resistances to survive.
+- You need flexible attribute fixing.
+- You're in SSF and can't target-farm the unique.
+- The unique's downside is too costly for your build.
+
+A typical build uses 1-3 build-enabling uniques + rares everywhere else.
+More than 3 uniques makes resists and defenses hard to cap.
+
+### Crafting Systems `[GGG-IG]` `[COMM]`
+
+PoE2's crafting system differs from PoE1. Understanding how to craft gear
+is essential for build planning — especially for SSF and league start.
+
+#### Crafting Methods by Budget
+
+**League Start / Low Budget:**
+1. **Essences** — guarantee a specific mod type on an item. Use Screaming
+   Essences for targeted crafting. Very strong for getting life/resists
+   on armour.
+2. **Harvest crafting** — reroll item with guaranteed mod type (fire, cold,
+   lightning, chaos, life, speed, crit, etc.). Great for resist fixing.
+3. **Omens** — meta-modifiers that affect the next currency used. Omen of
+   Whittling removes the lowest-level modifier. Omen of Blanching
+   randomizes socket colours.
+4. **Basic orbs** — Transmutation → Augmentation → Regal → Exalted. The
+   fundamental crafting chain for magic → rare.
+
+**Mid-Budget:**
+5. **Greater Essences** — higher tier guarantees, more powerful mods.
+6. **Fracturing** — lock one mod permanently on the item so it can't be
+   removed. Can only be done once. Use on a base with one perfect mod
+   before crafting the rest.
+7. **Harvest reforge** — more specific outcomes than basic rerolls.
+8. **Exalted Orbs** — add a new mod to a rare item (up to 6 mods).
+   This is the primary way to fill mod slots.
+
+**High-Budget:**
+9. **Divine Orbs** — reroll numeric values within their ranges. Use on
+   items with perfect mods but low rolls.
+10. **Omen crafting chains** — Omens + Exalted/Divine/Chaos for targeted
+    outcomes. Omen of Amelioration reduces the risk of bricking.
+11. **Corruption** — Vaal Orb can add powerful implicits or destroy the
+    item. High-risk, high-reward.
+
+#### Crafting Process for a Rare Item
+
+Standard crafting flow for a life+resists body armour (league start):
+
+1. Acquire a good base (high item level, correct base type).
+2. Quality the base (Armourer's Scrap / Blacksmith's Whetstone).
+3. **Transmutation** → make it magic with 1 mod.
+4. **Augmentation** → add second mod (now magic with 2 mods).
+5. If bad mods, **Scouring** and restart. If good, continue.
+6. **Regal Orb** → upgrade to rare with 1 additional mod (now 3 mods).
+7. **Exalted Orb ×3** → add mods 4, 5, 6.
+8. If the item is good enough, stop. If not, Chaos Orb or restart.
+9. Fix resists/life with Harvest or bench crafting (if any bench exists).
+
+Standard crafting flow for a mid-budget weapon:
+
+1. Acquire high-iLvl base with good implicits.
+2. Quality to 20% (Whetstones).
+3. **Essence** of the desired damage type (e.g., flat fire for fire build).
+4. If other mods are bad, **Scouring** and try again with another Essence.
+5. Once the essence mod + 1-2 good mods are on, **Regal** → **Exalted ×3**.
+6. Craft missing mod if bench crafting exists.
+7. If 4+ good mods but low rolls, **Divine Orb** to improve them.
+8. If item is near-perfect (5+ T1-T2 mods), consider Vaal Orb for implicit.
+
+#### SSF Crafting Strategy
+
+- **Pick up every relevant base.** You need volume for crafting attempts.
+- **Prioritize Essences and Harvest.** These are the most deterministic.
+- **Expedition** — Rog crafting, Gwennen gambling, Tujen currency.
+- **Don't chase 6-mod items.** A 4-mod item with the right mods clears all
+  non-pinnacle content. Get functional first, optimize later.
+- **Save Divine Orbs.** They're rare. Only use on build-defining items.
+- **Fracture first if you have one.** Landing one T1 mod + fracturing it
+  saves dozens of crafting attempts.
+
+#### Mod Tiers & Item Level `[COMM]`
+
+- Higher item level (iLvl) unlocks higher mod tiers.
+- iLvl 82+: all mod tiers available for most bases.
+- iLvl 84-86: top-tier mods for specific slots.
+- When recommending gear, specify the minimum iLvl needed for the mods
+  you want.
+
+### League Mechanics & Build Impact `[GGG-IG]` `[COMM]`
+
+League mechanics provide unique gearing, crafting, and build opportunities.
+Understand how each one affects what a build can access.
+
+#### Current & Core League Mechanics
+
+**Delirium:**
+- Cluster Jewels drop from Delirium encounters. These add passive tree
+  extensions (8-12 passives on a jewel) and can provide build-enabling
+  notables not available on the main tree.
+- Simulacrum is the Delirium endgame — wave-based arena requiring strong
+  AoE and sustain.
+- Delirium Orbs add the mechanic to maps for targeted farming.
+- **Build impact:** Check if a cluster jewel notable enables your
+  unconventional build or fills a gap the main tree can't reach.
+
+**Breach:**
+- Breach splinters combine into Breachstones → Breachlord bosses.
+- Breach uniques and Breach rings provide powerful effects.
+- Breachstones are the primary source of Breach-exclusive drops.
+- **Build impact:** Breach requires good AoE clear speed. Breach rings
+  can fix resists while providing damage.
+
+**Expedition:**
+- Four vendors: Rog (crafting), Gwennen (gambling), Tujen (currency), Dannig (logbooks).
+- Logbooks provide expedition encounters with higher rewards.
+- **Build impact:** Expedition is the best mechanic for SSF gearing.
+  Rog can produce 5-mod rare items with decent rolls. Gwennen can
+  gamble for build-enabling uniques.
+
+**Ritual:**
+- Tribute system: defer items you can't afford, they reappear later.
+- Ritual-exclusive uniques and bases.
+- **Build impact:** Ritual requires strong sustain and AoE. It's a good
+  source of currency and rare items in SSF.
+
+**Sanctum:**
+- Relic-based runs with resolve mechanic. Resolve is a secondary HP bar
+  that depletes on hit — you lose the run when it hits zero.
+- Rewards scale with room completion and boss kills.
+- **Build impact:** Sanctum heavily favors ranged, high-damage builds
+  that don't get hit. Totem, mine, and DoT builds excel here. Melee
+  struggles unless you can kill everything before it swings.
+
+**Ultimatum:**
+- Survival/increasing-difficulty encounters. Choose escalating debuffs
+  for better rewards.
+- **Build impact:** Requires strong survivability and sustain. Tanky
+  builds thrive. Glass cannons die to stacking debuffs.
+
+**Essence:**
+- Frozen monsters with guaranteed mod drops. Essences are the most
+  deterministic crafting currency.
+- **Build impact:** No special build requirements. Essence farming
+  just requires damage.
+
+**Strongboxes:**
+- Currency, map, and divination card drops.
+- **Build impact:** Operative's Strongboxes (rare) can duplicate
+  currency. No build requirements.
+
+**Harbingers:**
+- Summon waves of enemies, drop currency shards.
+- **Build impact:** No special requirements. Good passive currency income.
+
+#### How League Mechanics Shape Build Recommendations
+
+When designing a build, consider:
+
+1. **What content will this build farm?** A mapper, a bosser, a sanctum
+   runner, a simulacrum farmer, or a generalist? This determines:
+   - AoE vs single-target priority
+   - Defensive requirements (delirium/simulacrum = high sustain)
+   - Movement speed priority
+
+2. **Where does the build get its key items?**
+   - Boss-drop uniques: plan for the specific boss fight
+   - League-mechanic uniques: plan for farming that mechanic
+   - Crafted rares: plan for the crafting method (essence? harvest? rog?)
+   - Divination cards: specify which map to farm
+
+3. **League start vs late-league considerations:**
+   - League start: prioritize easily accessible gear (essence craft, bench craft, cheap uniques)
+   - Late league: higher budget, rarer uniques available, better crafting options
+   - SSF: everything must be target-farmable or craftable
+
 ### Level Scaling `[ESTIMATED]` `[COMM]`
 
 Passive points by level 80:
@@ -599,13 +882,23 @@ Keystones: [list with brief rationale]
 Key notables: [list]
 Defense clusters: [list]
 
---- GEAR PRIORITIES ---
-Weapon:   [base type] — [key mods]
-Offhand:  [shield/focus/2nd weapon]
-Helm:     [base] — [key mods]
-Amulet:   [base] — [key mods]
-Rings:    [base] — [key mods]
-Belt:     [base] — [key mods]
+--- GEAR ---
+Weapon:   [base type, min iLvl]
+  Prefix: [flat damage] [% damage] [+gem levels]
+  Suffix: [attack/cast speed] [crit chance] [crit multi]
+Offhand:  [shield/focus — key mods]
+Helm:     [base] — life/ES + resists + [special mod]
+Amulet:   [base] — [key prefix] + [key suffix] + anoint
+Rings:    [base] — flat damage + life/ES + resists
+Belt:     [base] — life + resists + [charm slots/flask mods]
+Gloves:   [base] — life + resists + [AS/ailment chance]
+Boots:    [base] — movement speed + life + resists
+Jewels:   [type] — [key mods]
+
+--- CRAFTING STRATEGY ---
+Priority upgrades: [order of items to upgrade]
+Crafting method: [essence target] [harvest reroll type]
+Target uniques: [where they drop]
 ...
 
 --- PLAYSTYLE ---
@@ -673,6 +966,10 @@ Copy the contents and paste into the PoE2 planner import dialog.
 - [ ] Skill gem IDs use correct Metadata/ paths
 - [ ] All mechanics claims have source citations
 - [ ] `[ESTIMATED]` tag used where mechanics are unverified
+- [ ] Gear section has prefix/suffix breakdown per slot with min iLvl
+- [ ] Crafting strategy included (essence target, harvest type, priority upgrades)
+- [ ] League mechanics considered for gearing (where key uniques drop, what content to farm)
+- [ ] Unique vs rare tradeoffs explained (1-3 uniques max, rest rares)
 - [ ] Resistance totals account for -60% endgame penalty
 - [ ] Hardcore builds: chaos res ≥ 0, overcapped ele res, 2+ defense layers
 - [ ] SSF builds: no trade-only uniques
