@@ -95,6 +95,7 @@ PoE1 knowledge is NOT PoE2 knowledge without explicit GGG confirmation.
 ```bash
 cd scripts
 python fetch_tree.py --force   # get current tree data (5K+ nodes)
+python route_tree.py --class Mercenary --targets 58714 29514 --level 80 --budget  # route + budget check
 python generate_build.py spec.json --xml  # test a build spec
 python calc_stats.py spec.json --detail  # compute character stats
 ```
