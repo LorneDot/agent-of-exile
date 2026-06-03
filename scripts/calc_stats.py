@@ -392,6 +392,234 @@ def compute_stats(spec: dict) -> BuildStats:
     )
 
 
+def analyze_defense(stats: BuildStats, spec: dict) -> str:
+    """Analyze defensive layers against map/pinnacle thresholds.
+
+    Thresholds (community-vetted for PoE2 softcore):
+      T1  maps (68): 3K EHP + capped res
+      T6  maps (73): 4K EHP + capped res + 1 layer
+      T11 maps (78): 5K EHP + capped res + 2 layers
+      T16 maps (82): 6K EHP + overcapped res + 2 layers
+      Pinnacle boss: 8K EHP + overcapped res + 3 layers
+
+    Defensive layers counted: armour >5K, evasion >8K, block >30%,
+    spell suppression >50%, Mind over Matter.
+    """
+    # Raw resistance totals (before 75% cap) to check overcapping
+    gear_res = spec.get("gearResistances", {})
+    tree_res = spec.get("treeResistances", {})
+    penalty = ELEMENTAL_RES_PENALTY.get(
+        spec.get("campaignProgress", "endgame"), -60
+    )
+
+    raw_res: dict[str, float] = {}
+    for rtype in ("fire", "cold", "lightning"):
+        raw_res[rtype] = gear_res.get(rtype, 0) + tree_res.get(rtype, 0) + penalty
+
+    # Count defensive layers
+    layer_names: list[str] = []
+    if stats.defence.armour > 5000:
+        layer_names.append(f"Armour ({stats.defence.armour:.0f})")
+    if stats.defence.evasion > 8000:
+        layer_names.append(f"Evasion ({stats.defence.evasion:.0f})")
+    if stats.defence.block_chance > 30:
+        layer_names.append(f"Block ({stats.defence.block_chance:.0f}%)")
+    if stats.defence.spell_suppression > 50:
+        layer_names.append(f"Spell Supp ({stats.defence.spell_suppression:.0f}%)")
+    if spec.get("mindOverMatter"):
+        layer_names.append("MoM")
+
+    num_layers = len(layer_names)
+    ehp = stats.defence.ehp
+
+    # Capped check (all three elemental res at the 75% soft-cap)
+    res_capped = all(
+        getattr(stats.defence, f"{r}_res") >= RES_CAP_BASE
+        for r in ("fire", "cold", "lightning")
+    )
+    # Overcapped = raw total exceeds cap (buffer against curses/pen)
+    res_overcapped = all(
+        raw_res[r] > RES_CAP_BASE for r in ("fire", "cold", "lightning")
+    )
+
+    tiers: list[tuple[str, float, str, int]] = [
+        ("T1 maps (68)",   3000, "capped",     0),
+        ("T6 maps (73)",   4000, "capped",     1),
+        ("T11 maps (78)",  5000, "capped",     2),
+        ("T16 maps (82)",  6000, "overcapped", 2),
+        ("Pinnacle boss",  8000, "overcapped", 3),
+    ]
+
+    lines: list[str] = ["=== Defense Layer Analysis ===", ""]
+    for name, ehp_thresh, res_req, layer_req in tiers:
+        issues: list[str] = []
+
+        if ehp < ehp_thresh:
+            issues.append(
+                f"EHP {ehp:.0f} below {ehp_thresh} threshold "
+                f"(short by {ehp_thresh - ehp:.0f})"
+            )
+
+        if res_req == "capped" and not res_capped:
+            missing = [
+                r for r in ("fire", "cold", "lightning")
+                if getattr(stats.defence, f"{r}_res") < RES_CAP_BASE
+            ]
+            issues.append(f"resists not capped (missing: {', '.join(missing)})")
+
+        if res_req == "overcapped" and not res_overcapped:
+            under = [
+                f"{r} raw={raw_res[r]:.0f}%"
+                for r in ("fire", "cold", "lightning")
+                if raw_res[r] <= RES_CAP_BASE
+            ]
+            issues.append(f"resists not overcapped ({', '.join(under)})")
+
+        if num_layers < layer_req:
+            issues.append(
+                f"only {num_layers} defensive layer(s) (need {layer_req})"
+            )
+
+        if issues:
+            lines.append(f"{name}: UNSAFE — {'; '.join(issues)}")
+        else:
+            layer_detail = ""
+            if layer_names:
+                layer_detail = f" ({num_layers} layers: {', '.join(layer_names)})"
+            lines.append(f"{name}: SAFE{layer_detail}")
+
+    return "\n".join(lines)
+
+
+def compute_gear_targets(stats: BuildStats, spec: dict,
+                         targets: dict) -> str:
+    """Compute gear gaps needed to reach desired stat targets.
+
+    Compares tree-provided stats against user's desired targets and
+    reports what must be sourced from gear (+ runes for resistances).
+    """
+    base_attrs = CLASS_BASE_ATTRS.get(
+        stats.class_name, {"str": 0, "dex": 0, "int": 0}
+    )
+    tree_attrs = spec.get("treeAttributes", {"str": 0, "dex": 0, "int": 0})
+
+    # Tree-only life (no gear contributions)
+    tree_str = base_attrs["str"] + tree_attrs.get("str", 0)
+    life_tree_pct = spec.get("increasedLifeFromTree", 0)
+    tree_life_flat = (
+        BASE_LIFE + stats.level * LIFE_PER_LEVEL + tree_str * LIFE_PER_STR
+    )
+    tree_life = tree_life_flat * (1 + life_tree_pct / 100)
+
+    # Tree-only mana
+    tree_int = base_attrs["int"] + tree_attrs.get("int", 0)
+    mana_tree_pct = spec.get("increasedManaFromTree", 0)
+    tree_mana_flat = (
+        BASE_MANA + stats.level * MANA_PER_LEVEL + tree_int * MANA_PER_INT
+    )
+    tree_mana = tree_mana_flat * (1 + mana_tree_pct / 100)
+
+    # Tree resists
+    tree_res = spec.get("treeResistances", {})
+    penalty = ELEMENTAL_RES_PENALTY.get(
+        spec.get("campaignProgress", "endgame"), -60
+    )
+
+    lines: list[str] = ["=== Gear Target Analysis ===", ""]
+
+    # --- Life target ---
+    if "life" in targets:
+        target_life = float(targets["life"])
+        gap = target_life - tree_life
+        if gap > 0.5:
+            # Flat life from gear also gets multiplied by %increased
+            multiplier = 1 + life_tree_pct / 100
+            flat_needed = gap / multiplier if multiplier > 0 else gap
+            lines.append(
+                f"To reach {target_life:.0f} life: need +{flat_needed:.0f} "
+                f"flat life from gear (tree gives {tree_life:.0f} base)"
+            )
+        else:
+            lines.append(
+                f"Life target of {target_life:.0f} already met "
+                f"(tree gives {tree_life:.0f})"
+            )
+
+    # --- Mana target ---
+    if "mana" in targets:
+        target_mana = float(targets["mana"])
+        gap = target_mana - tree_mana
+        if gap > 0.5:
+            multiplier = 1 + mana_tree_pct / 100
+            flat_needed = gap / multiplier if multiplier > 0 else gap
+            lines.append(
+                f"To reach {target_mana:.0f} mana: need +{flat_needed:.0f} "
+                f"flat mana from gear (tree gives {tree_mana:.0f} base)"
+            )
+        else:
+            lines.append(
+                f"Mana target of {target_mana:.0f} already met "
+                f"(tree gives {tree_mana:.0f})"
+            )
+
+    # --- Resistance targets ---
+    for res_name in ("fire", "cold", "lightning"):
+        target_key = f"{res_name}_res"
+        if target_key in targets:
+            target = float(targets[target_key])
+            tree_provided = tree_res.get(res_name, 0)
+            # After penalty: gear + tree + penalty >= target
+            needed = target - tree_provided - penalty
+            if needed > 0:
+                lines.append(
+                    f"To cap {res_name} res: need +{needed:.0f}% from "
+                    f"gear+runes (after {penalty}% penalty, tree gives "
+                    f"{tree_provided:.0f}%)"
+                )
+            else:
+                after_pen = tree_provided + penalty
+                lines.append(
+                    f"{res_name} res already capped from tree "
+                    f"(tree gives {tree_provided:.0f}%, "
+                    f"after penalty: {after_pen:.0f}%)"
+                )
+
+    # --- Chaos resistance (no campaign penalty) ---
+    if "chaos_res" in targets:
+        target = float(targets["chaos_res"])
+        tree_provided = tree_res.get("chaos", 0)
+        needed = target - tree_provided
+        if needed > 0:
+            lines.append(
+                f"To cap chaos res: need +{needed:.0f}% from gear "
+                f"(tree gives {tree_provided:.0f}%)"
+            )
+        else:
+            lines.append(
+                f"Chaos res already capped from tree "
+                f"(tree gives {tree_provided:.0f}%)"
+            )
+
+    # --- Attribute targets ---
+    for attr in ("str", "dex", "int"):
+        if attr in targets:
+            target = int(targets[attr])
+            tree_provided = base_attrs.get(attr, 0) + tree_attrs.get(attr, 0)
+            gap = target - tree_provided
+            if gap > 0:
+                lines.append(
+                    f"To reach {target} {attr.upper()}: need +{gap} "
+                    f"from gear (tree gives {tree_provided})"
+                )
+            else:
+                lines.append(
+                    f"{attr.upper()} target of {target} already met "
+                    f"(tree gives {tree_provided})"
+                )
+
+    return "\n".join(lines)
+
+
 def cli() -> None:
     import argparse
 
@@ -403,6 +631,11 @@ def cli() -> None:
                         help="Show detailed breakdowns")
     parser.add_argument("--json", action="store_true",
                         help="Output as JSON")
+    parser.add_argument("--danger", action="store_true",
+                        help="Analyze defensive layers vs map/pinnacle thresholds")
+    parser.add_argument("--targets", type=str, default=None,
+                        help="JSON dict of desired stats for gear gap analysis, "
+                             "e.g. '{\"life\": 4000, \"fire_res\": 75}'")
     args = parser.parse_args()
 
     spec = json.loads(Path(args.spec).read_text())
@@ -420,6 +653,21 @@ def cli() -> None:
             print(f"Armour reduction vs {phys_hit} phys hit: {red:.1f}%")
     else:
         print(stats.summary())
+
+    # Defense layer analysis
+    if args.danger:
+        print()
+        print(analyze_defense(stats, spec))
+
+    # Gear target analysis
+    if args.targets:
+        try:
+            targets = json.loads(args.targets)
+        except json.JSONDecodeError as e:
+            print(f"Error parsing --targets JSON: {e}", file=sys.stderr)
+            sys.exit(1)
+        print()
+        print(compute_gear_targets(stats, spec, targets))
 
 
 if __name__ == "__main__":

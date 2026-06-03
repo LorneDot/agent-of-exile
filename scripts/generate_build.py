@@ -31,6 +31,7 @@ Usage:
     python generate_build.py build_spec.json -o output.txt
     python generate_build.py build_spec.json          # stdout (base64 string)
     python generate_build.py build_spec.json --xml    # raw XML to stdout
+    python generate_build.py build_spec.json --summary --import-instructions
 """
 
 from __future__ import annotations
@@ -41,6 +42,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from build_codec import encode_build
+from calc_stats import compute_stats
 
 
 def _elem(parent: ET.Element, tag: str, text: str | None = None,
@@ -162,6 +164,37 @@ def generate_build_string(spec: dict) -> str:
     return encode_build(xml)
 
 
+def format_import_instructions() -> str:
+    """Return copy-paste instructions for importing into Maxroll planner."""
+    return """\
+=== IMPORT INSTRUCTIONS ===
+
+To import this build into the Maxroll PoE2 Planner:
+
+  1. Copy the encoded build string above (the long base64 text).
+  2. Go to: https://maxroll.gg/poe2/planner/
+  3. Click the "Import" button (top bar, looks like a download icon).
+  4. Paste the build string into the import dialog.
+  5. Click "Import" to load the build.
+
+Alternatively, for the official Path of Exile 2 planner:
+  1. Copy the encoded build string.
+  2. Go to the PoE2 Passive Skill Tree on the official website.
+  3. Use the "Import Build" option to paste the string.
+
+Note: The encoded string contains both passive tree and skill gem data.
+Make sure to copy the entire string (it should be one continuous line)."""
+
+
+def format_build_summary(spec: dict) -> str:
+    """Generate a human-readable build summary using calc_stats."""
+    try:
+        stats = compute_stats(spec)
+        return stats.summary()
+    except Exception as e:
+        return f"(Could not compute stats: {e})\n\nRaw spec summary:\n  Class: {spec.get('className', '?')}\n  Ascendancy: {spec.get('ascendClassName', '?')}\n  Level: {spec.get('level', '?')}\n  Passives: {len(spec.get('passives', []))} nodes\n  Skills: {len(spec.get('skills', []))} skill sets"
+
+
 def cli() -> None:
     import argparse
 
@@ -177,6 +210,14 @@ def cli() -> None:
         "--xml", action="store_true",
         help="Output raw XML instead of encoded build string"
     )
+    parser.add_argument(
+        "--import-instructions", action="store_true",
+        help="Append copy-paste instructions for importing into Maxroll planner"
+    )
+    parser.add_argument(
+        "--summary", action="store_true",
+        help="Include an inline build summary computed via calc_stats"
+    )
     args = parser.parse_args()
 
     spec = json.loads(Path(args.spec).read_text())
@@ -185,6 +226,14 @@ def cli() -> None:
         result = generate_build_xml(spec)
     else:
         result = generate_build_string(spec)
+
+    # Append summary if requested (before instructions, as instructions
+    # reference "the encoded build string above")
+    if args.summary:
+        result += "\n\n" + format_build_summary(spec)
+
+    if args.import_instructions:
+        result += "\n\n" + format_import_instructions()
 
     if args.output:
         Path(args.output).write_text(result)

@@ -329,6 +329,162 @@ def format_route(
     return "\n".join(lines)
 
 
+def format_leveling_guide(
+    order: list[tuple[str, float, str]],
+    all_nodes: list[str],
+    nodes: dict,
+    level: int,
+    ascendancy_order: list[tuple[str, float, str]] | None = None,
+    ascendancy_name: str | None = None,
+    ascendancy_max: int = 0,
+    trimmed: set[str] | None = None,
+) -> str:
+    """Format a leveling guide splitting the allocation into point bands.
+
+    Bands:
+      Levels 1-20  (~27 pts): path to first build-enabling notable
+      Levels 20-40 (~28 pts): path to 2nd-3rd key notables
+      Levels 40-60 (~26 pts): damage scaling notables
+      Levels 60-80 (~22 pts): defense, jewel sockets, cleanup
+      Levels 80+  (remaining): remaining points + ascendancy cleanup
+    """
+    available = (level - 1) + 24
+
+    # Build the full sequential allocation order (regular + ascendancy interleaved)
+    all_order: list[tuple[str, float, str, bool]] = []
+    # (node_id, score, reason, is_ascendancy)
+
+    # Interleave ascendancy: take ascendancy notables around level 20-30
+    # (first trial ~level 20-25, second ~40-50, third ~60-65, fourth ~75-80)
+    reg_idx = 0
+    asc_idx = 0
+    asc_insert_points = [
+        max(0, min(int(len(order) * 0.20), len(order))),   # ~20% through = first trial
+        max(0, min(int(len(order) * 0.45), len(order))),   # ~45% through = second trial
+        max(0, min(int(len(order) * 0.65), len(order))),   # ~65% through = third trial
+        max(0, min(int(len(order) * 0.85), len(order))),   # ~85% through = fourth trial
+    ]
+    asc_targets = []
+    if ascendancy_order:
+        asc_targets = list(ascendancy_order)
+
+    while reg_idx < len(order) or asc_idx < len(asc_targets):
+        # Insert ascendancy nodes at the appropriate positions
+        while asc_idx < len(asc_targets) and asc_idx < len(asc_insert_points) and reg_idx >= asc_insert_points[asc_idx]:
+            nid, score, reason = asc_targets[asc_idx]
+            all_order.append((nid, score, reason, True))
+            asc_idx += 1
+        if reg_idx < len(order):
+            nid, score, reason = order[reg_idx]
+            all_order.append((nid, score, reason, False))
+            reg_idx += 1
+    # Any remaining ascendancy
+    while asc_idx < len(asc_targets):
+        nid, score, reason = asc_targets[asc_idx]
+        all_order.append((nid, score, reason, True))
+        asc_idx += 1
+
+    # Define level bands with approximate point budgets
+    bands = [
+        (1, 20, 27, "Path to first build-enabling notable"),
+        (20, 40, 28, "Path to 2nd-3rd key notables"),
+        (40, 60, 26, "Damage scaling notables"),
+        (60, 80, 22, "Defense, jewel sockets, cleanup"),
+    ]
+    # Last band: 80+
+    remaining_pts = available
+    for _, _, pts, _ in bands:
+        remaining_pts -= pts
+    if remaining_pts < 0:
+        remaining_pts = 0
+    bands.append((80, level, remaining_pts, "Remaining points + ascendancy cleanup"))
+
+    lines: list[str] = []
+    lines.append("")
+    lines.append("=== Leveling Guide ===")
+    lines.append("")
+    lines.append(f"Total regular point budget: {available}")
+    lines.append(f"Total nodes to allocate: {len(all_nodes)}")
+    if trimmed:
+        trimmed_names = []
+        for tid in sorted(trimmed):
+            tn = nodes.get(tid, {})
+            trimmed_names.append(tn.get("name", tid))
+        lines.append(f"Trimmed (budget constrained): {', '.join(trimmed_names)}")
+    lines.append("")
+
+    # Split the ordered list into bands proportionally
+    total_items = len(all_order)
+    if total_items == 0:
+        lines.append("(no nodes to allocate)")
+        return "\n".join(lines)
+
+    # Estimate average points per target (including travel nodes between them)
+    # all_nodes includes travel + targets; order only has targets
+    avg_pts_per_target = len(all_nodes) / len(order) if order else 1.0
+
+    # Compute cumulative point proportions and split
+    band_budgets = [b[2] for b in bands]
+    total_budget = sum(band_budgets)
+    item_idx = 0
+    total_points_spent = 0
+    ascendancy_points_spent = 0
+
+    for band_idx, (band_start, band_end, band_pts, focus) in enumerate(bands):
+        if band_start > level:
+            break
+        if item_idx >= total_items:
+            break
+
+        # Proportion of items in this band
+        if band_idx < len(bands) - 1:
+            proportion = band_pts / total_budget if total_budget > 0 else 0
+            items_in_band = max(1, round(total_items * proportion))
+            items_in_band = min(items_in_band, total_items - item_idx)
+        else:
+            items_in_band = total_items - item_idx
+
+        if items_in_band <= 0:
+            break
+
+        band_items = all_order[item_idx:item_idx + items_in_band]
+        item_idx += items_in_band
+
+        # Count regular vs ascendancy
+        band_reg = sum(1 for _, _, _, is_asc in band_items if not is_asc)
+        band_asc = sum(1 for _, _, _, is_asc in band_items if is_asc)
+
+        # Estimate actual points: each regular target implies ~avg_pts_per_target points
+        est_band_pts = int(band_reg * avg_pts_per_target)
+        total_points_spent += est_band_pts
+        ascendancy_points_spent += band_asc * 2
+
+        lines.append(f"--- Levels {band_start}-{band_end} (~{band_pts} regular points) ---")
+        lines.append(f"Focus: {focus}")
+        if ascendancy_name and band_asc > 0:
+            lines.append(f"Ascendancy nodes in band: {band_asc} ({band_asc * 2} ascendancy points)")
+        lines.append(f"Est. points spent: {total_points_spent} / {available} regular")
+        if ascendancy_points_spent > 0:
+            lines.append(f"Ascendancy points so far: {ascendancy_points_spent} / {ascendancy_max}")
+        lines.append("")
+
+        for i, (nid, score, reason, is_asc) in enumerate(band_items, 1):
+            node = nodes.get(nid, {})
+            name = node.get("name", nid)
+            asc_tag = " [ASCENDANCY]" if is_asc else ""
+            lines.append(f"  {i:2d}. [{nid}] {name}{asc_tag} (score: {score})")
+            lines.append(f"      {reason}")
+
+        lines.append("")
+
+    # Add a summary line
+    lines.append(f"---")
+    lines.append(f"Total est. points: {total_points_spent} regular + {ascendancy_points_spent} ascendancy")
+    lines.append(f"(Target nodes only; travel nodes shown in main route above)")
+
+    return "\n".join(lines)
+
+
 def cli() -> None:
     import argparse
 
@@ -347,6 +503,8 @@ def cli() -> None:
                         help="Auto-trim lowest-priority targets to fit budget")
     parser.add_argument("--budget", action="store_true",
                         help="Show point budget details")
+    parser.add_argument("--leveling", action="store_true",
+                        help="Append a leveling guide with point bands")
     parser.add_argument("--json", action="store_true",
                         help="Output as JSON")
     args = parser.parse_args()
@@ -396,6 +554,14 @@ def cli() -> None:
                                  for nid, score, reason in asc_order],
             "trimmed": sorted(trimmed) if trimmed else [],
         }
+        if args.leveling:
+            result["leveling_guide"] = format_leveling_guide(
+                order, all_nodes, nodes, args.level,
+                ascendancy_order=asc_order if asc_order else None,
+                ascendancy_name=args.ascendancy,
+                ascendancy_max=asc_max,
+                trimmed=trimmed if trimmed else None,
+            )
         print(json.dumps(result, indent=2))
     else:
         print(format_route(
@@ -407,6 +573,14 @@ def cli() -> None:
             trimmed=trimmed if trimmed else None,
             show_budget=args.budget or args.trim,
         ))
+        if args.leveling:
+            print(format_leveling_guide(
+                order, all_nodes, nodes, args.level,
+                ascendancy_order=asc_order if asc_order else None,
+                ascendancy_name=args.ascendancy,
+                ascendancy_max=asc_max,
+                trimmed=trimmed if trimmed else None,
+            ))
 
 
 if __name__ == "__main__":
