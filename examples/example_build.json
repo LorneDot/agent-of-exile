@@ -1,0 +1,31 @@
+{
+  "className": "Witch",
+  "ascendClassName": "Infernalist",
+  "level": 80,
+  "passives": [],
+  "skills": [
+    {
+      "setName": "Default",
+      "skills": [
+        {
+          "gems": [
+            {
+              "id": "Metadata/Items/Gems/SkillGemFireball",
+              "level": 20,
+              "quality": 20
+            },
+            {
+              "id": "Metadata/Items/Gems/SupportGemGreaterMultipleProjectiles",
+              "level": 20
+            },
+            {
+              "id": "Metadata/Items/Gems/SupportGemSpellEcho",
+              "level": 20
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": "Example Infernalist Fireball build.\n\nReplace the empty passives array with real node IDs from data.json."
+}
