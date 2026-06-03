@@ -219,6 +219,150 @@ When designing a build, mention currency/crafting only in terms of:
 Never quote orb:chaos ratios or market prices — those change hourly.
 Refer to poe2db.tw for crafting mod pools and currency mechanics.
 
+### Crafting Process `[GGG-IG]` `[GGG-DEV]`
+
+This section explains HOW to craft, not just what the currencies do.
+The specific orbs used are confirmed — the step sequences are general
+patterns that apply regardless of patch.
+
+#### The Basic Crafting Chain
+
+PoE2 crafting follows a linear upgrade path for most items:
+
+```
+Normal (white) → Magic (blue, 1-2 mods) → Rare (yellow, 3-6 mods)
+```
+
+Each step uses a specific currency:
+
+1. **Start with a base** — acquire a normal item with good base type and
+   high enough item level for your desired mod tiers. Quality it first
+   (Whetstone/Scrap) — quality persists through crafting.
+
+2. **Make it magic** — Orb of Transmutation adds 1 random mod. If the mod
+   is bad, Scour and try again (or use another base). If good, use an
+   Orb of Augmentation to add a 2nd mod.
+
+3. **Make it rare** — Regal Orb upgrades magic → rare, adding a 3rd mod.
+   You now have 3 mods on the item.
+
+4. **Fill mod slots** — Exalted Orbs add mods 4, 5, and 6. Each Exalt
+   is a gamble — you can't control which mod you get without Omens.
+
+5. **Fix or restart** — if the item has 3+ good mods but 1-2 bad ones,
+   Orb of Annulment removes a random mod (gamble). If the item is mostly
+   bad, Chaos Orb to full reroll, or Scour to restart.
+
+6. **Optimize values** — once you have the right mods, Divine Orb rerolls
+   the numeric values within their tiers. Save for items worth investing in.
+
+7. **Final risk** — Vaal Orb as the last step. Can add a powerful implicit,
+   reroll mods into corrupted versions, or brick the item entirely.
+   Corrupted items cannot be modified further.
+
+#### Targeted Crafting Strategies
+
+**Essence crafting** (most deterministic for league start):
+1. Acquire normal base, quality to 20%
+2. Use Essence that guarantees your priority mod (e.g., life, flat damage)
+3. If the other mods from the essence craft are bad, Scour and try again
+4. Once you have the essence mod + 1-2 decent random mods, Regal → Exalt
+5. Essence mods cannot be removed by Scouring after the item is rare
+
+**Harvest crafting** (resist fixing, mid-budget):
+1. Use Harvest lifeforce at the Horticrafting Station
+2. Targeted reroll: "Reforge with a life modifier" guarantees one life mod
+3. Great for fixing resistances — "Reforge with a fire modifier" etc.
+4. More deterministic than Chaos Orbs for specific mod types
+
+**Omen-assisted crafting** (high-budget, meta-crafting):
+1. Omen of Whittling: next currency removes the lowest-level mod instead
+   of adding/rerolling. Use before an Annulment to target bad low-tier mods.
+2. Omen of Blanching: next Chromatic Orb produces specific socket colours.
+3. Omens are consumed on use — they enable targeted outcomes that basic
+   orbs can't achieve.
+
+#### SSF Crafting Strategy
+
+- **Pick up every relevant base.** Volume matters — you'll Scour and retry
+  dozens of times.
+- **Essences are king.** They're the most deterministic. Prioritize essence
+  farming on the Atlas tree.
+- **Harvest is second.** Targeted rerolls save enormous currency.
+- **Don't chase perfection.** A 4-mod item with the right mods clears all
+  non-pinnacle content. The difference between 4-mod and 6-mod is usually
+  a 15-20% power gain for 10× the cost.
+- **Bench crafts fill gaps.** If a crafting bench exists in PoE2, use it
+  to add a guaranteed mod (typically a resist or attribute) as the last step.
+- **Save Divine Orbs for build-defining items.** They're rare in SSF.
+- **Corruption is the final gamble.** Only Vaal items you can afford to lose.
+
+### Runes & Socketables `[GGG-DEV]` `[GGG-IG]`
+
+PoE2 introduces Runes as socketable items that go into gear sockets.
+This is separate from the skill gem system — gems have their own sockets
+in the gem menu. Gear sockets are for runes, soul cores, and similar items.
+
+#### What Runes Are
+
+- Runes are items that socket directly into gear (body armour, helmet,
+  weapons, etc.)
+- Each piece of gear has a fixed number of rune sockets based on its
+  type and item level
+- Runes provide stat bonuses: resistances, attributes, damage, life, etc.
+- Once socketed, runes cannot be removed (except possibly with specific
+  currency or vendor recipes)
+- Runes are NOT gems — they don't grant skills
+
+#### Types of Socketables
+
+| Type | What it does | Source |
+|------|-------------|--------|
+| Runes | Basic stat bonuses (fire res, life, STR, etc.) | Drops, vendors |
+| Soul Cores | Advanced/powerful bonuses (build-enabling effects) | Boss drops, league content |
+| [ESTIMATED] Other socketables may exist from league mechanics | | |
+
+Runes are a core part of gearing in PoE2. When designing a build, you
+must account for what runes to socket in each gear piece — they're not
+optional and provide significant stats.
+
+#### Rune Sockets on Gear `[GGG-IG]`
+
+- Weapons: typically 1-2 rune sockets
+- Body armour: typically 1-3 rune sockets
+- Helmet, gloves, boots: typically 1 rune socket
+- Shields: typically 1-2 rune sockets
+- Jewelry (rings, amulet, belt): no rune sockets
+
+The exact number depends on item base type and item level. Two-handed
+weapons and high-tier body armour get more sockets.
+
+#### Common Rune Stats `[COMM]` — verify on poe2db.tw
+
+Runes typically provide one of:
+- Elemental resistance (fire, cold, lightning — 8-15% per rune)
+- Attributes (+10-20 STR/DEX/INT per rune)
+- Flat life or energy shield
+- Flat added damage (elemental or physical)
+- Leech (life or mana)
+- Increased damage of a specific type
+
+Soul cores provide more powerful or unique effects. Look up current
+rune and soul core stats on poe2db.tw → Runes.
+
+#### Runes in Build Planning
+
+When designing a build:
+1. **Count available rune sockets** across all gear
+2. **Allocate runes to fill resist gaps** first — runes are the most
+   flexible way to fix uncapped resistances
+3. **Use remaining sockets for damage or attributes** once resists are capped
+4. **Account for rune stats in your total** — 6 sockets × 12% fire res =
+   72% fire resistance from runes alone
+
+For character audits: check if the character has unused rune sockets.
+Empty sockets are the easiest "free" upgrade in the game.
+
 ## Where to Find Everything Else
 
 For item mods, gear tiers, gem data, unique items, crafting options, and

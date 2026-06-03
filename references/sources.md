@@ -44,6 +44,7 @@ developer statements about how systems work.
 | PoE2 currencies | PoE2DB → Currencies | Web | All currency items, their effects, and mechanics |
 | PoE2 essences | PoE2DB → Essences | Web | Essence tiers, guaranteed mod types |
 | PoE2 omens | PoE2DB → Omens | Web | Meta-crafting items and their effects |
+| PoE2 runes & soul cores | PoE2DB → Runes | Web | Socketable runes, soul cores, and their stats |
 
 **poe2db.tw is the primary source for gear/crafting/mod data.** When designing
 builds, use poe2db to look up what mods are available on each slot, what tier
