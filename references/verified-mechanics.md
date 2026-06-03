@@ -370,6 +370,81 @@ When designing a build:
 For character audits: check if the character has unused rune sockets.
 Empty sockets are the easiest "free" upgrade in the game.
 
+### Passive Point Budget `[GGG-IG]` `[COMM]`
+
+Every build must respect the point budget. You cannot allocate more points
+than the character has. Always verify your node list against the available
+points for the build's target level.
+
+**Points from levels:**
+- Level 1 starts with 0 points allocated (root node is free)
+- Gain 1 passive point per level
+- Level X character has X-1 points from leveling
+
+**Points from quests:**
+- Campaign quests grant +24 passive points total (confirmed from PoE2 campaign) `[GGG-IG]`
+- All 24 points are available by the end of Act 6 (Cruel)
+- No further quest points in endgame
+
+**Total passive points:**
+
+| Level | From Levels | From Quests | Total |
+|-------|------------|-------------|-------|
+| 20    | 19         | ~8          | ~27   |
+| 40    | 39         | ~16         | ~55   |
+| 60    | 59         | ~22         | ~81   |
+| 80    | 79         | 24          | 103   |
+| 90    | 89         | 24          | 113   |
+| 100   | 99         | 24          | 123   |
+
+These are the hard maximums. A build spec with 18 notables at level 80
+must have enough points left for travel nodes connecting them.
+
+**Additional points from other sources:**
+- Ascendancy passive points: up to 8 (from labyrinth/trials). These are
+  separate from regular passive points and can only be spent in the
+  ascendancy tree.
+- Bandit quest: ±2 passive points depending on choice. `[COMM]` — verify
+  if PoE2 has bandit quests.
+
+**Point budgeting rule:** When presenting a build, always state:
+- Total points available at target level
+- Points spent on travel nodes (estimate based on tree distance)
+- Points spent on notables and keystones
+- Points remaining (if any)
+
+### Tree Pathing & Connectivity `[TREE]`
+
+Nodes on the passive tree are connected by edges. You cannot allocate a
+node unless you've already allocated a node that connects to it. The
+`out` and `in` fields in data.json define these connections.
+
+**Pathing rules when designing a build:**
+
+1. **Start from the class root node.** Find it via the class's
+   `overridePairs` in data.json.
+
+2. **Trace outward.** Follow `out` arrays to find reachable nodes.
+   Each step from one node to another costs 1 passive point.
+
+3. **Path through travel nodes.** The nodes between notables are mostly
+   `isGenericAttribute` nodes (+5 to an attribute). These are the
+   "travel tax" — they cost points but give minimal stats.
+
+4. **Count every node.** Your node list must include ALL allocated
+   nodes — not just the notables. Every travel node on the path
+   costs a point.
+
+5. **Verify connectivity.** Before finalizing, check that every node
+   in your list is reachable from the root by following `out`/`in`
+   connections. A notable on the opposite side of the tree with no
+   path to it is wasted text.
+
+**Pathing cost estimate:** As a rule of thumb, travel nodes between
+clusters typically cost 3-7 points. A build with 15 notables will
+have roughly 30-50 travel nodes, for a total of 45-65 points just
+in pathing. Always budget for this.
+
 ## Where to Find Everything Else
 
 For item mods, gear tiers, gem data, unique items, crafting options, and

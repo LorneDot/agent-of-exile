@@ -112,11 +112,17 @@ applied as design principles on top of any entry point — see Entry D.
 2. Find which ascendancy passives and support gems amplify those tags.
 3. Pick the class/ascendancy with the most synergy.
 4. Load `fetch_tree.py` output. Trace the tree path from class start to
-   relevant damage and defense clusters.
-5. Select supports from poe2db.tw — prioritize "more" multipliers.
-6. Look up gear mods on poe2db.tw → Mods for each equipment slot.
-7. Compute stats with `calc_stats.py`.
-8. Generate build file with `generate_build.py`.
+   relevant damage and defense clusters. **Verify connectivity** using
+   `out`/`in` fields — every node must be reachable from root. Include
+   travel nodes in your list (not just notables). Budget 3-7 travel nodes
+   between clusters.
+5. **Check point budget.** Total allocated nodes (notables + travel) must
+   not exceed available points. Level 80 = 103 points (79 levels + 24 quests).
+   Cut lowest-impact nodes if over budget.
+6. Select supports from poe2db.tw — prioritize "more" multipliers.
+7. Look up gear mods on poe2db.tw → Mods for each equipment slot.
+8. Compute stats with `calc_stats.py`.
+9. Generate build file with `generate_build.py`.
 
 ### Entry B: Class-First
 
