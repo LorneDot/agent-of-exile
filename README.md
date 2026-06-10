@@ -22,16 +22,21 @@ recited from stale memory.
 | Capability | How |
 |---|---|
 | **Build design** | 5 entry points: skill-first, class-first, ascendancy-first, risk profile, off-meta |
+| **Orchestration pipeline** | 4 automated pipelines: full-build (7-stage), validate, character-upgrade, craft-vs-buy |
 | **Passive tree routing** | BFS graph traversal with auto-trim to point budget, leveling guide, ascendancy pathing |
 | **Stat calculation** | EHP, resists, armour formula, DPS estimates, danger thresholds per Waystone tier, gear gap targeter |
 | **Gem analysis** | Tag-based support matching, DPS simulation, breakpoint analysis, attribute requirement checks, 5/6-link optimization |
-| **Crafting advisor** | Item type/base awareness, iLvl breakpoints, prefix/affix pools per slot, socket crafting, budget-tiered crafting plans |
+| **Enhanced DPS** | Full simulation: auras (12+ buffs), charges, monster resistances per tier, pinnacle boss DPS |
+| **Crafting simulation** | Mod weight probability, expected attempts/cost, 7 crafting methods, craft-vs-buy comparison |
+| **Crafting advisor** | Item type/base awareness, iLvl breakpoints, prefix/affix pools per slot, socket crafting, budget-tiered plans |
+| **Trade integration** | PoE2 trade API search with mod filters, live search (POESESSID), upgrade suggestions |
 | **Unique analyzer** | Unique item lookup, build-around detection, synergy scoring with ascendancies/skills, comparison |
 | **Build optimizer** | Cluster discovery, node swap simulation, travel efficiency scoring, budget reallocation |
 | **Build comparison** | Side-by-side ascendancy/class diff with stat deltas |
 | **Character audit** | Live PoE2 API import — item-by-item upgrade paths, crafting steps, priority ranking |
 | **Atlas planning** | 8 strategy presets for atlas passive tree routing |
 | **Build export** | GGG-compatible build.txt for import into official planner |
+| **Data fetching** | 1,600+ item bases from PoB2, 21 mod weight groups, skill tree, gems, uniques |
 
 ---
 
@@ -43,10 +48,24 @@ git clone https://github.com/LorneDot/agent-of-exile.git ~/workspace/agent-of-ex
 cd ~/workspace/agent-of-exile/scripts
 
 # One-time setup
-python fetch_tree.py --force      # 5,102-node skill tree
-python fetch_gem_data.py --force  # 54-support gem cache
+python fetch_poe2_data.py --force      # item bases + mod weights (1,600+ items)
+python fetch_tree.py --force           # skill tree (5K+ nodes)
+python fetch_gem_data.py --force       # gem tag reference
+python fetch_unique_data.py --force    # unique item reference
 
-# Route a build
+# One-command full build (7 stages)
+python build_pipeline.py full-build --class Mercenary \
+  --ascendancy "Gemling Legionnaire" --skill "Explosive Grenade" \
+  --targets 58714 29514 17882 --auras "Herald of Ash" -o build.json
+
+# Validate a build
+python build_pipeline.py validate build.json
+
+# Craft vs buy decision
+python build_pipeline.py craft-vs-buy --slot "Ring" \
+  --desired-mods life_flat fire_res cold_res --budget 100
+
+# Or run individual tools
 python route_tree.py --class Mercenary --ascendancy "Gemling Legionnaire" \
   --targets 58714 29514 17882 64119 --level 80 --trim --leveling
 
@@ -95,6 +114,25 @@ python generate_build.py spec.json --summary --import-instructions
 ---
 
 ## Tool Reference
+
+### `build_pipeline.py` — Orchestration Pipeline
+```
+python build_pipeline.py full-build --class Mercenary \
+  --ascendancy "Gemling Legionnaire" --skill "Explosive Grenade" \
+  --targets 58714 29514 17882 --auras "Herald of Ash" -o build.json
+python build_pipeline.py validate build.json
+python build_pipeline.py craft-vs-buy --slot "Ring" --desired-mods life_flat fire_res cold_res
+python build_pipeline.py character-upgrade --account Lorne --char MyWitch
+```
+
+Chains tools into automated pipelines:
+- **full-build**: Route → Gems → DPS → Craft → Trade → Stats → Uniques (7 stages)
+- **validate**: Stats + DPS + danger threshold checks
+- **craft-vs-buy**: Advisor → Simulator → Trade URL
+- **character-upgrade**: Fetch → Audit → Trade suggestions
+
+All stages output to a unified BuildSpec JSON. `--json` flag on all
+individual tools for programmatic chaining.
 
 ### `route_tree.py` — Passive Tree Router
 ```
@@ -279,6 +317,11 @@ agent-of-exile/
 │   └── skill-tree-format.md         # Tree JSON schema (from data.json)
 ├── scripts/
 │   ├── route_tree.py                # Tree router + leveling + ascendancy
+│   ├── build_pipeline.py            # Orchestration: full-build, validate, craft-vs-buy, character-upgrade
+│   ├── fetch_poe2_data.py            # Item bases + mod weights cache (1,600+ items)
+│   ├── craft_simulator.py            # Crafting probability + cost simulation
+│   ├── trade_finder.py               # PoE2 trade API search + upgrade finder
+│   ├── dps_simulator.py              # Enhanced DPS (auras/charges/resists)
 │   ├── gem_linker.py                # Support gem auto-matcher
 │   ├── gem_analyzer.py              # DPS sim, link optimization, breakpoints
 │   ├── calc_stats.py                # Stats + danger + gear targeter
