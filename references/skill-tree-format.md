@@ -144,7 +144,7 @@ Each node is keyed by its **string** ID (e.g., "42761", "root"):
 | `isFree` | bool | Granted automatically (no point cost) |
 | `isGenericAttribute` | bool | +5 attribute travel node |
 | `keystonesInRadius` | int[] | Keystone node IDs within radius |
-| `recipe` | string[] | Anoint recipe (oils required) |
+| `recipe` | string[] | Node recipe data (not used for anointing in PoE2) |
 | `grantedPassivePoints` | int? | Free points granted |
 | `ascendancyId` | string? | Which ascendancy this belongs to |
 

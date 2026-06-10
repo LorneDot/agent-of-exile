@@ -11,7 +11,6 @@ PoE1 knowledge is NOT valid for PoE2 without explicit GGG confirmation.
 |------|-----|--------|---------------|
 | PoE2 passive tree (0.5) | `grindinggear/poe2-skilltree-export` | `data.json` | `fetch_tree.py` or raw GitHub |
 | PoE2 atlas tree | `grindinggear/atlastree-export` | `data.json` | Raw GitHub |
-| PoE1 tree (legacy) | `grindinggear/skilltree-export` | `data.json` | Raw GitHub |
 
 These are the ONLY sources of truth for:
 - Class base attributes

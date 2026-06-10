@@ -65,7 +65,7 @@ Each class has an `ascendancies` array in data.json with:
 ```
 Damage Reduction % = Armour / (Armour + 5 × RawHitDamage)
 ```
-Confirmed same as PoE1 formula `[GGG-DEV]`.
+Confirmed formula for PoE2 `[GGG-DEV]`.
 
 ### Evasion Formula
 ```
@@ -177,15 +177,13 @@ essence type corresponds to a mod category (e.g., fire damage, life,
 resists). Higher tiers (Whispering → Screaming → Shrieking → Deafening)
 provide higher-tier mods.
 
-PoE2 essence tiers and names may differ from PoE1. Look up current names
-on poe2db.tw → Essences. The principle is what matters: essences are
-targeted crafting for a specific mod type. `[POE2DB]`
+PoE2 essence tiers and names should be looked up on poe2db.tw → Essences. The principle is what matters: essences are targeted crafting for a specific mod type. `[POE2DB]`
 
 ### Omens `[GGG-DEV]`
 
 Omens are meta-crafting items that modify the behavior of the next currency
-used. GGG has confirmed omens exist in PoE2 and serve as the replacement
-for PoE1's crafting bench in many cases. Examples of omen effects
+used. Omens are meta-crafting items that serve as PoE2's primary
+targeted crafting system. Examples of omen effects
 (verify specific names on poe2db.tw):
 
 - Remove the lowest-level modifier on next orb use
@@ -197,12 +195,11 @@ Look up current omen names and effects on poe2db.tw → Omens. `[POE2DB]`
 
 ### League-Specific Crafting Materials `[ESTIMATED]`
 
-The existence of these mechanics is confirmed from GGG trailers, but
-specific item names and interactions may differ from PoE1:
+The existence of these mechanics is confirmed from GGG trailers and in-game:
 
 - **Expedition currencies** — used with Expedition vendors for crafting (Rog, etc.)
 - **Breach catalysts** — add quality to jewelry, enhancing specific mod types
-- **Delirium orbs** — apply Delirium to maps for cluster jewel farming
+- **Delirium orbs** — apply Delirium layers to Waystones for added difficulty and rewards
 - **Fracturing orbs** — lock one mod permanently (unconfirmed in PoE2)
 
 For current availability and specific item IDs: poe2db.tw → [league name].
@@ -294,8 +291,8 @@ Each step uses a specific currency:
 - **Don't chase perfection.** A 4-mod item with the right mods clears all
   non-pinnacle content. The difference between 4-mod and 6-mod is usually
   a 15-20% power gain for 10× the cost.
-- **Bench crafts fill gaps.** If a crafting bench exists in PoE2, use it
-  to add a guaranteed mod (typically a resist or attribute) as the last step.
+- **Rune sockets fill gaps.** Use rune sockets (Artificer's Orbs) to add
+  guaranteed stats (resists, attributes, damage) as the final step.
 - **Save Divine Orbs for build-defining items.** They're rare in SSF.
 - **Corruption is the final gamble.** Only Vaal items you can afford to lose.
 
@@ -401,11 +398,10 @@ These are the hard maximums. A build spec with 18 notables at level 80
 must have enough points left for travel nodes connecting them.
 
 **Additional points from other sources:**
-- Ascendancy passive points: up to 8 (from labyrinth/trials). These are
+- Ascendancy passive points: up to 8 (from ascendancy trials). These are
   separate from regular passive points and can only be spent in the
   ascendancy tree.
-- Bandit quest: ±2 passive points depending on choice. `[COMM]` — verify
-  if PoE2 has bandit quests.
+- Quest rewards: up to 24 passive points from campaign quests and side quests.
 
 **Point budgeting rule:** When presenting a build, always state:
 - Total points available at target level

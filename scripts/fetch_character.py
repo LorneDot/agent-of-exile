@@ -154,7 +154,7 @@ def summarize_character(data: dict) -> str:
     jewel_data = passives.get("jewel_data", {})
     if jewel_data:
         cluster_count = len(jewel_data)
-        lines.append(f"  Cluster jewel sockets: {cluster_count}")
+        lines.append(f"  Jewel sockets: {cluster_count}")
 
     return "\n".join(lines)
 

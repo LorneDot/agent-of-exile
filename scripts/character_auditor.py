@@ -277,11 +277,11 @@ def deep_audit_character(character_data: dict) -> DeepAudit:
 
     if level >= 68:
         if ehp < 3000:
-            stat_gaps.append(f"EHP {ehp:.0f} below T1 maps minimum (3,000)")
+            stat_gaps.append(f"EHP {ehp:.0f} below T1 Waystones minimum (3,000)")
         elif ehp < 4000:
-            stat_gaps.append(f"EHP {ehp:.0f} below T6 maps recommendation (4,000)")
+            stat_gaps.append(f"EHP {ehp:.0f} below T6 Waystones recommendation (4,000)")
         elif ehp < 5000:
-            stat_gaps.append(f"EHP {ehp:.0f} below T11 maps recommendation (5,000)")
+            stat_gaps.append(f"EHP {ehp:.0f} below T11 Waystones recommendation (5,000)")
 
         # Check for resistances from character data
         for res_name, res_label in [

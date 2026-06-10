@@ -23,7 +23,7 @@ recited from stale memory.
 |---|---|
 | **Build design** | 5 entry points: skill-first, class-first, ascendancy-first, risk profile, off-meta |
 | **Passive tree routing** | BFS graph traversal with auto-trim to point budget, leveling guide, ascendancy pathing |
-| **Stat calculation** | EHP, resists, armour formula, DPS estimates, danger thresholds per map tier, gear gap targeter |
+| **Stat calculation** | EHP, resists, armour formula, DPS estimates, danger thresholds per Waystone tier, gear gap targeter |
 | **Gem analysis** | Tag-based support matching, DPS simulation, breakpoint analysis, attribute requirement checks, 5/6-link optimization |
 | **Crafting advisor** | Item type/base awareness, iLvl breakpoints, prefix/affix pools per slot, socket crafting, budget-tiered crafting plans |
 | **Unique analyzer** | Unique item lookup, build-around detection, synergy scoring with ascendancies/skills, comparison |
@@ -73,7 +73,7 @@ python build_optimizer.py --spec spec.json --find-clusters
 # Deep character audit
 python character_auditor.py --account Lorne --char MyWitch
 
-# Check if your build survives T16 maps
+# Check if your build survives T16 Waystones
 python calc_stats.py spec.json --danger
 
 # Compare two ascendancies
@@ -213,7 +213,7 @@ python atlas_route.py --strategy expedition --level 40
 `expedition` `breach` `delirium` `ritual` `essence` `harvest` `bossing` `general`
 
 Fetches atlas tree data from `grindinggear/atlastree-export`. Routes shortest
-path, enforces atlas point budget (~30-40 from map completion).
+path, enforces atlas point budget (~30-40 from Waystone completion).
 
 ### `fetch_character.py` — Live Character Import
 ```

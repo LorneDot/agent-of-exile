@@ -3,7 +3,7 @@
 
 Given a strategy name or a list of target atlas notable/keystone node IDs,
 finds the shortest connected path through the atlas passive tree, suggests
-optimal allocation order, and enforces point budgets (from map completion).
+optimal allocation order, and enforces point budgets (from Waystone completion).
 
 Fetches atlas tree data from grindinggear/atlastree-export on GitHub and
 caches it locally.
@@ -87,7 +87,7 @@ STRATEGIES: dict[str, tuple[str, list[str], list[str]]] = {
             "40355",  # Imagined Pursuits (reward type +count)
             "9972",   # Screaming Whispers (splinter stack size)
             "55126",  # Pathological (maps with delirium layers)
-            "26152",  # Paranoid Fixation (cluster jewels, orbs)
+            "26152",  # Paranoid Fixation (Simulacrum splinters, Delirium rewards)
         ],
         [
             "44043",  # Unending Nightmare (fog never dissipates)
@@ -115,7 +115,7 @@ STRATEGIES: dict[str, tuple[str, list[str], list[str]]] = {
             "26310",  # Crystal Lattice (extra essences)
             "55696",  # Amplified Energies (highest tier essences)
             "57336",  # Crystal Resonance (map boss inherits essences)
-            "62161",  # Crystalline Carapaces (essence scarabs)
+            "62161",  # Crystalline Carapaces (essence tablets)
         ],
         [],
     ),
@@ -136,40 +136,40 @@ STRATEGIES: dict[str, tuple[str, list[str], list[str]]] = {
         ],
     ),
     "bossing": (
-        "Bossing / Maven / Eldritch",
+        "Pinnacle Bosses",
         [
-            "61358",  # Shaping the World (map drops, tier upgrade)
-            "18476",  # Conquered Conquerors (conqueror map drops)
-            "12651",  # Remnants of the Past (elder/shaper guardian maps)
-            "18900",  # The Most Toys (Maven witness credit)
-            "54499",  # Baptised by Fire (Exarch progress)
-            "8182",   # Etched by Acid (Eater progress)
-            "55003",  # The Light of Dawn (Exarch altars)
-            "41053",  # The Shadow of Hunger (Eater altars)
-            "37197",  # Word of the Exarch (duped embers)
-            "28157",  # Rampant Growth (duped ichor)
+            "61358",  # Shaping the World (Waystone drops, tier upgrade)
+            "18476",  # Higher Stakes (pinnacle boss fragment drops)
+            "12651",  # Remnants of the Past (boss map sustain)
+            "18900",  # Test of Will (pinnacle witness progress)
+            "54499",  # Purifying Fire (Arbiter of Ash progress)
+            "8182",   # Corrosive Touch (Breach boss progress)
+            "55003",  # Dawn's Light (pinnacle boss rewards)
+            "41053",  # Deep Hunger (Delirium boss progress)
+            "37197",  # Flaming Word (Arbiter of Ash fragments)
+            "28157",  # Rampant Growth (Expedition boss progress)
         ],
         [
-            "34384",  # Destructive Play (Maven summons extra bosses)
-            "48336",  # Wrath of the Cosmos (Exarch altars)
-            "33008",  # Eldritch Gaze (Eater altars)
+            "34384",  # Destructive Play (additional pinnacle bosses)
+            "48336",  # Cosmic Wrath (pinnacle boss difficulty)
+            "33008",  # Eldritch Sight (pinnacle boss rewards)
         ],
     ),
     "general": (
         "General / All-Purpose",
         [
-            "24609",  # Shaping the Mountains (rare monsters, map tiers)
-            "35608",  # Shaping the Skies (magic monsters, map tiers)
-            "34352",  # Significant Troves (scarabs from uniques)
-            "14578",  # Skittering Swarms (more scarabs)
+            "24609",  # Shaping the Mountains (rare monsters, Waystone tiers)
+            "35608",  # Shaping the Skies (magic monsters, Waystone tiers)
+            "34352",  # Significant Troves (precursor tablets from uniques)
+            "14578",  # Skittering Swarms (more precursor tablets)
             "25273",  # Invasive Adversaries (difficult/rewarding packs)
-            "53876",  # Chittering Champions (map boss scarab drop)
-            "64462",  # Amplified Artefacts (scarabs from rares)
-            "30954",  # Remarkable Relics (rarer scarabs)
-            "34393",  # Mounting Modifiers (explicit mod effect)
-            "30266",  # Multiplying Modifiers (fragment mod effect)
-            "64464",  # Awakened Depths (abyssal depths chance)
-            "26020",  # Abyssal Army (abyss xp/monsters)
+            "53876",  # Chittering Champions (Waystone boss tablet drop)
+            "64462",  # Amplified Artefacts (tablets from rares)
+            "30954",  # Remarkable Relics (rarer precursor tablets)
+            "34393",  # Mounting Modifiers (Waystone explicit mod effect)
+            "30266",  # Multiplying Modifiers (Waystone mod effect)
+            "64464",  # Awakened Depths (Abyss depths chance)
+            "26020",  # Abyssal Army (Abyss XP/monsters)
         ],
         [
             "2493",   # Wellspring of Creation (less dmg, more life - safer)

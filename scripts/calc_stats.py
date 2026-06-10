@@ -73,7 +73,7 @@ ELEMENTAL_RES_PENALTY = {
     "act5_cruel": -40,  # After Act 10 / early maps
     "endgame": -60,     # Default endgame penalty
 }
-# Source: GGG confirmed -60% res penalty in endgame (same as PoE1)
+# Source: GGG confirmed -60% res penalty in endgame [GGG-PN]
 
 # Resistance cap (default) — source: PoE2 in-game
 RES_CAP_BASE = 75
@@ -85,11 +85,11 @@ RES_CAP_MAX = 90
 
 # Armour damage reduction formula — source: GGG developer posts, community testing
 # Reduction = Armour / (Armour + 5 * Damage)
-# This is the same formula as PoE1, confirmed for PoE2
+# Confirmed for PoE2 by GGG [GGG-DEV]
 
 # Evasion formula — source: GGG developer posts
 # Chance to Evade = 1 - Accuracy / (Accuracy + (Evasion * 0.25) ^ 0.8)
-# This uses entropy system (same as PoE1)
+# Uses entropy system [GGG-IG]
 
 # Energy Shield — source: PoE2 in-game
 # Base ES from gear + % increases from passives and INT
@@ -250,7 +250,7 @@ def estimate_life(base_class: str, level: int, strength: int,
     life_from_str = strength * LIFE_PER_STR
 
     # Typical % increased life available
-    # Source: community build data — PoE2 has less %life on tree than PoE1
+    # Source: community build data — PoE2 has limited %life on tree
     pct_increased = life_from_tree / 100  # life_from_tree is percentages
 
     flat_total = base_life + life_from_str + life_from_gear
@@ -396,10 +396,10 @@ def analyze_defense(stats: BuildStats, spec: dict) -> str:
     """Analyze defensive layers against map/pinnacle thresholds.
 
     Thresholds (community-vetted for PoE2 softcore):
-      T1  maps (68): 3K EHP + capped res
-      T6  maps (73): 4K EHP + capped res + 1 layer
-      T11 maps (78): 5K EHP + capped res + 2 layers
-      T16 maps (82): 6K EHP + overcapped res + 2 layers
+      T1 Waystones (68): 3K EHP + capped res
+      T6 Waystones (73): 4K EHP + capped res + 1 layer
+      T11 Waystones (78): 5K EHP + capped res + 2 layers
+      T16 Waystones (82): 6K EHP + overcapped res + 2 layers
       Pinnacle boss: 8K EHP + overcapped res + 3 layers
 
     Defensive layers counted: armour >5K, evasion >8K, block >30%,
@@ -443,10 +443,10 @@ def analyze_defense(stats: BuildStats, spec: dict) -> str:
     )
 
     tiers: list[tuple[str, float, str, int]] = [
-        ("T1 maps (68)",   3000, "capped",     0),
-        ("T6 maps (73)",   4000, "capped",     1),
-        ("T11 maps (78)",  5000, "capped",     2),
-        ("T16 maps (82)",  6000, "overcapped", 2),
+        ("T1 Waystones (68)",   3000, "capped",     0),
+        ("T6 Waystones (73)",   4000, "capped",     1),
+        ("T11 Waystones (78)",  5000, "capped",     2),
+        ("T16 Waystones (82)",  6000, "overcapped", 2),
         ("Pinnacle boss",  8000, "overcapped", 3),
     ]
 

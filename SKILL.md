@@ -225,10 +225,9 @@ Store it as `POESESSID` environment variable or pass via `--session`.
    - **Free wins:** allocate unused passives, swap gem levels, fix support
      gem tags, use empty jewel sockets
    - **Cheap upgrades:** essence-craft life/resists on worst rare piece,
-     buy level 20 gems, anoint amulet
-   - **Mid-budget:** replace worst-in-slot rare, add cluster jewel setup,
-     upgrade weapon
-   - **Expensive:** chase uniques, 6-link, double corrupt
+     buy level 20 gems, add runes to empty rune sockets
+   - **Mid-budget:** replace worst-in-slot rare, upgrade weapon
+   - **Expensive:** chase uniques, 6-link, Vaal orb corrupt
 
 6. **For each suggestion, explain:** what to change, why, what source
    confirms the improvement (poe2db.tw for mod availability), and
@@ -252,7 +251,7 @@ When the user asks how to craft an item or plan gear:
    python scripts/crafting_advisor.py --slot-bases "<slot>" # bases for a slot
    ```
 3. The advisor returns: recommended base item, target iLvl, step-by-step
-   crafting process with currency costs, and alternatives (trade, Rog, Harvest).
+   crafting process with currency costs, and alternatives (trade, Expedition Rog, Harvest resistance swaps).
 4. For item analysis: `python scripts/crafting_advisor.py --item <item.json>`
    (JSON from `fetch_character.py` output).
 5. Key concepts: prefixes (up to 3), suffixes (up to 3), iLvl thresholds
