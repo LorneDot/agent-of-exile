@@ -367,6 +367,8 @@ def cli() -> None:
                         help="Conditional modifiers ('low_life', 'shocked', etc.)")
     parser.add_argument("--list-auras", action="store_true",
                         help="List available auras and exit")
+    parser.add_argument("--json", action="store_true",
+                        help="Output machine-readable JSON")
 
     args = parser.parse_args()
 
@@ -394,7 +396,22 @@ def cli() -> None:
         conditional_damage=args.conditional,
     )
 
-    print(result.format())
+    if args.json:
+        print(json.dumps({
+            "skill": result.skill_name,
+            "base_dps": result.base_dps,
+            "raw_dps": result.raw_dps,
+            "effective_dps": result.effective_dps,
+            "pinnacle_dps": result.pinnacle_dps,
+            "monster_tier": result.monster_tier,
+            "monster_res": result.monster_res,
+            "support_multiplier": result.support_multiplier,
+            "aura_multiplier": result.aura_multiplier,
+            "active_auras": result.active_auras,
+            "active_charges": result.active_charges,
+        }, indent=2))
+    else:
+        print(result.format())
 
 
 if __name__ == "__main__":

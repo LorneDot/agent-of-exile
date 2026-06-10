@@ -610,6 +610,8 @@ def cli() -> None:
                         help="Compare two skills")
     parser.add_argument("--matrix", action="store_true",
                         help="Show full support synergy matrix")
+    parser.add_argument("--json", action="store_true",
+                        help="Output machine-readable JSON")
 
     args = parser.parse_args()
 
@@ -649,7 +651,22 @@ def cli() -> None:
             added_flat=args.added_flat,
             increased_mod=args.increased,
         )
-        print(sim.format())
+        if args.json:
+            print(json.dumps({
+                "skill": sim.skill,
+                "level": sim.gem_level,
+                "links": sim.links,
+                "base_damage": sim.base_damage,
+                "dps": sim.estimated_dps,
+                "multiplier": sim.total_multiplier,
+                "supports": sim.supports,
+                "multiplier_breakdown": [
+                    {"name": n, "multiplier": m}
+                    for n, m in sim.multiplier_breakdown
+                ],
+            }, indent=2))
+        else:
+            print(sim.format())
 
 
 if __name__ == "__main__":

@@ -357,6 +357,8 @@ def cli() -> None:
                         help="Compare crafting vs buying from trade")
     parser.add_argument("--ilvl", type=int, default=82,
                         help="Target item level")
+    parser.add_argument("--json", action="store_true",
+                        help="Output machine-readable JSON")
 
     args = parser.parse_args()
 
@@ -369,13 +371,34 @@ def cli() -> None:
         slot = args.weapon_type
 
     if args.vs_buy:
-        print(craft_vs_buy(slot, args.desired_mods, args.budget, weights_data))
+        if args.json:
+            import json
+            out = craft_vs_buy(slot, args.desired_mods, args.budget, weights_data)
+            print(json.dumps({"craft_vs_buy": out}, indent=2))
+        else:
+            print(craft_vs_buy(slot, args.desired_mods, args.budget, weights_data))
     else:
         sim = simulate_craft(
             slot, args.desired_mods, args.method,
             args.ilvl, weights_data,
         )
-        print(sim.format())
+        if args.json:
+            import json
+            print(json.dumps({
+                "slot": sim.slot,
+                "method": sim.method.name,
+                "desired_mods": sim.desired_mods,
+                "hit_probability": sim.hit_probability_per_roll,
+                "success_probability": sim.overall_success_probability,
+                "expected_attempts": sim.expected_attempts,
+                "estimated_cost": sim.estimated_total_cost,
+                "alternatives": [
+                    {"method": m, "cost": c, "verdict": v}
+                    for m, c, v in sim.alternatives
+                ],
+            }, indent=2))
+        else:
+            print(sim.format())
 
 
 if __name__ == "__main__":

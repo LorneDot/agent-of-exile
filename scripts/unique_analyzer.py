@@ -418,6 +418,8 @@ def cli() -> None:
     parser.add_argument("--slot", help="Find uniques for a specific equipment slot")
     parser.add_argument("--compare", nargs=2, metavar=("UNIQUE_A", "UNIQUE_B"),
                         help="Compare two unique items")
+    parser.add_argument("--json", action="store_true",
+                        help="Output machine-readable JSON")
     parser.add_argument("--refresh", action="store_true",
                         help="Force refresh unique data cache")
 
@@ -431,11 +433,27 @@ def cli() -> None:
         unique_data = load_unique_data()
 
     if args.unique:
-        print(lookup_unique(args.unique, unique_data))
+        if args.json:
+            import json
+            name = args.unique
+            uniques = unique_data.get("uniques", {})
+            info = uniques.get(name) or next((v for k,v in uniques.items() if k.lower()==name.lower()), {})
+            print(json.dumps(info, indent=2, default=str))
+        else:
+            print(lookup_unique(args.unique, unique_data))
 
     elif args.skill:
         profile = find_uniques_by_skill(args.skill, unique_data)
-        print(profile.format())
+        if args.json:
+            import json
+            print(json.dumps({
+                "query": profile.query,
+                "query_type": profile.query_type,
+                "build_enablers": [{"name": m.name, "slot": m.slot, "score": m.score} for m in profile.build_enablers],
+                "complementary": [{"name": m.name, "slot": m.slot, "score": m.score} for m in profile.complementary],
+            }, indent=2))
+        else:
+            print(profile.format())
 
     elif args.ascendancy:
         profile = find_uniques_by_ascendancy(args.ascendancy, unique_data)

@@ -372,6 +372,8 @@ def cli() -> None:
     parser.add_argument("--upgrade-for", dest="char_name",
                         help="Character name for upgrade suggestions")
     parser.add_argument("--account", help="Account name (with --upgrade-for)")
+    parser.add_argument("--json", action="store_true",
+                        help="Output machine-readable JSON")
     parser.add_argument("--url-only", action="store_true",
                         help="Only generate trade URL, don't search")
 
@@ -415,7 +417,21 @@ def cli() -> None:
         return
 
     result = search_trade(args.slot, args.mods, args.max_price, session_id)
-    print(result.format())
+    if args.json:
+        import json
+        print(json.dumps({
+            "slot": result.slot,
+            "desired_mods": result.desired_mods,
+            "total_listings": result.total_listings,
+            "search_url": result.search_url,
+            "results": [
+                {"name": r.name, "price": r.price, "seller": r.seller,
+                 "ilvl": r.item_level, "mods": r.mods}
+                for r in result.results
+            ],
+        }, indent=2))
+    else:
+        print(result.format())
 
 
 if __name__ == "__main__":
