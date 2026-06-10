@@ -100,21 +100,44 @@ PoE1 knowledge is NOT PoE2 knowledge without explicit GGG confirmation.
 
 ```bash
 cd scripts
-python fetch_tree.py --force          # get current skill tree data (5K+ nodes)
-python fetch_gem_data.py --force      # cache gem data for auto-support matching
-python fetch_unique_data.py --force   # cache unique item data
+python fetch_poe2_data.py --force      # item bases + mod weights (1,600+ items, 21 groups)
+python fetch_tree.py --force           # skill tree data (5K+ nodes)
+python fetch_gem_data.py --force       # cache gem data
+python fetch_unique_data.py --force    # cache unique item data
+
+# Build design
 python route_tree.py --class Mercenary --ascendancy "Gemling Legionnaire" \
-  --targets 58714 29514 17882 --level 80 --trim --leveling  # route + budget + leveling
-python gem_analyzer.py --skill "Explosive Grenade" --simulate-dps --links 5  # DPS + supports
-python crafting_advisor.py --slot "Body Armour" --desired-mods life_flat resistance  # plan crafting
-python unique_analyzer.py --ascendancy "Gemling Legionnaire"  # find build-around uniques
-python build_optimizer.py --spec spec.json --travel-report  # tree efficiency
-python calc_stats.py spec.json --danger --targets '{"life":4000}'  # defense check + gear gap
-python character_auditor.py --account Lorne --char MyWitch  # deep audit
+  --targets 58714 29514 17882 --level 80 --trim --leveling
+
+# Gem optimization + DPS simulation
+python gem_analyzer.py --skill "Explosive Grenade" --simulate-dps --links 5
+python dps_simulator.py --skill "Explosive Grenade" --auras "Herald of Ash" \
+  --monster-tier T16 --charges frenzy:3  # full DPS with auras/charges/resists
+
+# Crafting simulation
+python crafting_advisor.py --slot "Body Armour" --desired-mods life_flat resistance
+python craft_simulator.py --slot "Ring" --desired-mods life_flat fire_res cold_res \
+  --method essence_regal  # probability + cost simulation
+
+# Trade search
+python trade_finder.py --slot "Body Armour" --mods life_flat fire_res\
+  --max-price 50  # search poe2 trade for items
+
+# Unique analysis
+python unique_analyzer.py --ascendancy "Gemling Legionnaire"
+
+# Tree optimization
+python build_optimizer.py --spec spec.json --travel-report
+
+# Stats + audit
+python calc_stats.py spec.json --danger
+python character_auditor.py --account Lorne --char MyWitch
+
+# Compare + export
 python compare_builds.py --class-a Mercenary --asc-a "Gemling Legionnaire" \
-  --class-b Mercenary --asc-b Witchhunter --targets "58714 29514"  # side-by-side
-python atlas_route.py --strategy expedition --level 40  # atlas tree planner
-python generate_build.py spec.json --summary --import-instructions  # full output
+  --class-b Mercenary --asc-b Witchhunter --targets "58714 29514"
+python atlas_route.py --strategy expedition --level 40
+python generate_build.py spec.json --summary --import-instructions
 ```
 
 ## Build Design Workflow
@@ -318,6 +341,61 @@ When the user asks to optimize or audit their passive tree:
 5. Budget optimization: removes lowest-value nodes to fit a point budget
    while preserving connectivity.
 
+### Entry K: Crafting Probability Simulation
+
+When the user asks about crafting cost, odds, or craft vs buy:
+
+1. Use `craft_simulator.py`:
+   ```bash
+   python scripts/craft_simulator.py --slot "<slot>" --desired-mods <mod1> <mod2> ...
+   python scripts/craft_simulator.py --slot "<slot>" --desired-mods ... --method essence_spam
+   python scripts/craft_simulator.py --slot "<slot>" --desired-mods ... --vs-buy --budget 100
+   ```
+2. The simulator shows: per-mod hit probability, overall success chance,
+   expected crafting attempts, estimated currency cost, and alternative
+   method comparisons.
+3. Uses mod weights from `fetch_poe2_data.py` (21 groups, community-sourced).
+4. For craft vs buy: compares crafting cost to trade estimates and
+   recommends which approach.
+
+### Entry L: Trade Search
+
+When the user wants to find items on trade:
+
+1. Use `trade_finder.py`:
+   ```bash
+   python scripts/trade_finder.py --slot "<slot>" --mods <mod1> <mod2> --max-price 50
+   python scripts/trade_finder.py --slot "<slot>" --mods ... --url-only  # browser URL
+   ```
+2. Generates a poe2 trade search URL with mod filters.
+3. With POESESSID: performs live API search and returns top listings.
+4. For character upgrades: `python scripts/trade_finder.py --upgrade-for <char> --account <name>`
+
+### Entry M: Enhanced DPS Simulation
+
+When the user wants accurate DPS estimates:
+
+1. Use `dps_simulator.py`:
+   ```bash
+   python scripts/dps_simulator.py --skill "<name>" --links 5 \
+     --auras "Herald of Ash" "Anger" --monster-tier T16
+   python scripts/dps_simulator.py --skill "<name>" --charges frenzy:3,power:3
+   python scripts/dps_simulator.py --skill "<name>" --list-auras
+   ```
+2. Factors in: support gem multipliers, aura/buff effects, charge bonuses,
+   conditional damage (full life, shocked, etc.), penetration, monster
+   resistances per Waystone tier, and pinnacle boss DPS.
+3. Shows raw DPS, effective DPS vs chosen content tier, and pinnacle DPS.
+
+### Entry N: Data Caching
+
+Before any build work, ensure caches are fresh:
+
+1. `python scripts/fetch_poe2_data.py --force` — item bases + mod weights
+2. `python scripts/fetch_tree.py --force` — skill tree (5K+ nodes)
+3. `python scripts/fetch_gem_data.py --force` — gem tag reference
+4. `python scripts/fetch_unique_data.py --force` — unique item reference
+
 ## Generating the Build Output
 
 ```python
@@ -396,13 +474,18 @@ Always produce a structured summary containing:
 
 ## Verification Checklist
 
+- [ ] Data caches fresh (`python fetch_poe2_data.py --stats`)
 - [ ] Tree data current (`python fetch_tree.py --stats`)
 - [ ] Unique data cached (`python fetch_unique_data.py --stats`)
 - [ ] All passives are real node IDs from data.json
 - [ ] Gem IDs verified from poe2db.tw or gem_analyzer.py matrix
 - [ ] Attribute requirements checked (`--check-requirements`)
+- [ ] Auras and buffs factored into DPS (`dps_simulator.py`)
+- [ ] Monster resistance accounted for in DPS estimates
 - [ ] Gear mods sourced from poe2db.tw Mods or crafting_advisor.py
 - [ ] Crafting plans generated via crafting_advisor.py
+- [ ] Crafting probabilities simulated via craft_simulator.py
+- [ ] Trade searches generated via trade_finder.py where applicable
 - [ ] Unique synergies analyzed via unique_analyzer.py
 - [ ] Tree travel efficiency graded (build_optimizer.py --travel-report)
 - [ ] All mechanics claims have source tags
