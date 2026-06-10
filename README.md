@@ -24,9 +24,12 @@ recited from stale memory.
 | **Build design** | 5 entry points: skill-first, class-first, ascendancy-first, risk profile, off-meta |
 | **Passive tree routing** | BFS graph traversal with auto-trim to point budget, leveling guide, ascendancy pathing |
 | **Stat calculation** | EHP, resists, armour formula, DPS estimates, danger thresholds per map tier, gear gap targeter |
-| **Gem linking** | Auto-matches support gems by tag compatibility from 54-indexed reference |
+| **Gem analysis** | Tag-based support matching, DPS simulation, breakpoint analysis, attribute requirement checks, 5/6-link optimization |
+| **Crafting advisor** | Item type/base awareness, iLvl breakpoints, prefix/affix pools per slot, socket crafting, budget-tiered crafting plans |
+| **Unique analyzer** | Unique item lookup, build-around detection, synergy scoring with ascendancies/skills, comparison |
+| **Build optimizer** | Cluster discovery, node swap simulation, travel efficiency scoring, budget reallocation |
 | **Build comparison** | Side-by-side ascendancy/class diff with stat deltas |
-| **Character audit** | Live PoE2 API import — fetches gear, passives, gems, suggests tiered upgrades |
+| **Character audit** | Live PoE2 API import — item-by-item upgrade paths, crafting steps, priority ranking |
 | **Atlas planning** | 8 strategy presets for atlas passive tree routing |
 | **Build export** | GGG-compatible build.txt for import into official planner |
 
@@ -49,6 +52,26 @@ python route_tree.py --class Mercenary --ascendancy "Gemling Legionnaire" \
 
 # Find support gems
 python gem_linker.py --skill "Explosive Grenade" --max 6
+
+# Simulate gem DPS and optimize links
+python gem_analyzer.py --skill "Explosive Grenade" --simulate-dps --links 5
+python gem_analyzer.py --skill "Spark" --optimize-links 5
+
+# Plan crafting strategy
+python crafting_advisor.py --slot "Body Armour" --desired-mods life_flat resistance resistance armour_flat
+python crafting_advisor.py --list-mods  # show all mod tier breakpoints
+
+# Find build-around uniques
+python unique_analyzer.py --ascendancy "Gemling Legionnaire"
+python unique_analyzer.py --unique "The Three Dragons"
+python unique_analyzer.py --compare "Mageblood" "Headhunter"
+
+# Optimize passive tree
+python build_optimizer.py --spec spec.json --travel-report
+python build_optimizer.py --spec spec.json --find-clusters
+
+# Deep character audit
+python character_auditor.py --account Lorne --char MyWitch
 
 # Check if your build survives T16 maps
 python calc_stats.py spec.json --danger
@@ -90,6 +113,66 @@ point budgets, and auto-trims low-priority nodes if over budget.
 | `--ascendancy` | Route ascendancy notables on separate point pool |
 | `--budget` | Show point budget details |
 | `--json` | Machine-readable output |
+
+### `gem_analyzer.py` — Enhanced Gem Analysis
+```
+python gem_analyzer.py --skill "Explosive Grenade" --simulate-dps --links 5
+python gem_analyzer.py --skill "Spark" --optimize-links 5
+python gem_analyzer.py --skill "Earthquake" --check-requirements --str 150 --dex 70 --int 60
+python gem_analyzer.py --compare "Spark" "Arc"
+python gem_analyzer.py --skill "Fireball" --matrix
+```
+
+DPS simulation with support gem multipliers, 5/6-link optimization,
+attribute requirement checking, and side-by-side skill comparison.
+Full support synergy matrix shows all compatible gems with DPS multipliers.
+
+### `crafting_advisor.py` — Crafting Planner
+```
+python crafting_advisor.py --slot "Body Armour" --desired-mods life_flat resistance resistance armour_flat
+python crafting_advisor.py --slot Weapon --type Crossbow --desired-mods increased_phys flat_phys attack_speed
+python crafting_advisor.py --list-mods
+python crafting_advisor.py --item item.json
+```
+
+Generates step-by-step crafting plans for any gear slot. Accounts for
+item base types, iLvl breakpoints, prefix/suffix pools, rune sockets,
+and budget-appropriate methods. Lists all mod tier thresholds.
+
+### `unique_analyzer.py` — Unique Item Analyzer
+```
+python unique_analyzer.py --ascendancy "Gemling Legionnaire"
+python unique_analyzer.py --skill "Explosive Grenade"
+python unique_analyzer.py --build "lightning caster"
+python unique_analyzer.py --slot "Body Armour"
+python unique_analyzer.py --compare "Mageblood" "Headhunter"
+```
+
+Finds uniques that synergize with your ascendancy, skill, or build archetype.
+Scores matches by mechanic overlap, tags, and direct synergies.
+Detailed unique lookups show stats, mechanics, and build-around patterns.
+
+### `build_optimizer.py` — Tree Optimizer
+```
+python build_optimizer.py --spec spec.json --travel-report
+python build_optimizer.py --spec spec.json --find-clusters
+python build_optimizer.py --spec spec.json --what-if 58714 --replace-with 46123
+python build_optimizer.py --spec spec.json --optimize-budget 103
+```
+
+Analyzes travel efficiency, discovers notable clusters, simulates node swaps,
+and redistributes points within budget. Consolidation analysis finds
+routing shortcuts between clusters.
+
+### `character_auditor.py` — Deep Character Audit
+```
+python character_auditor.py --account Lorne --char MyWitch
+python character_auditor.py --file character.json --deep
+```
+
+Item-by-item upgrade recommendations with crafting steps per slot.
+Priority ranking by impact-per-cost. Identifies critical stat gaps
+and suggests specific trade/crafting targets.
 
 ### `gem_linker.py` — Support Gem Matcher
 ```
@@ -190,17 +273,25 @@ agent-of-exile/
 ├── references/
 │   ├── sources.md                   # Complete source directory
 │   ├── verified-mechanics.md        # GGG-confirmed formulas only
+│   ├── crafting-basics.md           # Crafting system reference
+│   ├── unique-synergies.md          # Unique item synergy patterns
 │   ├── build-format.md              # GGG build XML schema
 │   └── skill-tree-format.md         # Tree JSON schema (from data.json)
 ├── scripts/
 │   ├── route_tree.py                # Tree router + leveling + ascendancy
 │   ├── gem_linker.py                # Support gem auto-matcher
+│   ├── gem_analyzer.py              # DPS sim, link optimization, breakpoints
 │   ├── calc_stats.py                # Stats + danger + gear targeter
+│   ├── crafting_advisor.py          # Item types, iLvl breakpoints, mod pools, crafting plans
+│   ├── unique_analyzer.py           # Build-around detection, synergy scoring
+│   ├── fetch_unique_data.py         # Unique item data cache
+│   ├── build_optimizer.py           # Cluster discovery, node swaps, travel efficiency
 │   ├── compare_builds.py            # Side-by-side build comparison
 │   ├── atlas_route.py               # Atlas passive tree planner
 │   ├── fetch_tree.py                # Skill tree data cache
 │   ├── fetch_gem_data.py            # Gem data cache
 │   ├── fetch_character.py           # PoE2 API character import
+│   ├── character_auditor.py         # Deep audit: upgrade paths + crafting steps
 │   ├── generate_build.py            # Build spec → GGG file
 │   └── build_codec.py               # GGG format encode/decode
 └── examples/

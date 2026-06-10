@@ -1,7 +1,7 @@
 ---
 name: agent-of-exile
 description: "Use when the user asks to theory-craft, design, plan, audit, or create a Path of Exile 2 build. Agent of Exile sources mechanics from verified GGG data and poe2db, not memory. Computes character stats, imports live characters from the PoE2 API, and outputs GGG-compatible build planner files."
-version: 3.0.0
+version: 4.0.0
 author: Hermes Agent
 license: MIT
 metadata:
@@ -42,6 +42,8 @@ Each harness has its own way to read files. The skill references these files:
 |-----------|------|-------------|
 | Source directory | `references/sources.md` | First session, to learn where to look |
 | Verified mechanics | `references/verified-mechanics.md` | On demand, when formulas needed |
+| Crafting basics | `references/crafting-basics.md` | When planning gear or suggesting crafts |
+| Unique synergies | `references/unique-synergies.md` | When finding build-around uniques |
 | Build format | `references/build-format.md` | When generating output |
 | Skill tree format | `references/skill-tree-format.md` | When navigating data.json |
 
@@ -64,6 +66,10 @@ once — load on demand.
 - "meme build" / unconventional
 - "audit my [character]" / "improve my build" / "what should I upgrade?"
 - "look up my [class] on my account" / "analyze my PoE2 character"
+- "how do I craft [item]?" / "what mods can I get on [slot]?"
+- "what uniques work with [build/skill/ascendancy]?"
+- "optimize my gem links" / "what supports for [skill]?"
+- "optimize my passive tree" / "can I fit [node] in my build?"
 - Computing stats or generating a build file
 
 Don't use for: lore, boss guides, trade prices.
@@ -96,10 +102,15 @@ PoE1 knowledge is NOT PoE2 knowledge without explicit GGG confirmation.
 cd scripts
 python fetch_tree.py --force          # get current skill tree data (5K+ nodes)
 python fetch_gem_data.py --force      # cache gem data for auto-support matching
+python fetch_unique_data.py --force   # cache unique item data
 python route_tree.py --class Mercenary --ascendancy "Gemling Legionnaire" \
   --targets 58714 29514 17882 --level 80 --trim --leveling  # route + budget + leveling
-python gem_linker.py --skill "Explosive Grenade"   # find compatible supports
+python gem_analyzer.py --skill "Explosive Grenade" --simulate-dps --links 5  # DPS + supports
+python crafting_advisor.py --slot "Body Armour" --desired-mods life_flat resistance  # plan crafting
+python unique_analyzer.py --ascendancy "Gemling Legionnaire"  # find build-around uniques
+python build_optimizer.py --spec spec.json --travel-report  # tree efficiency
 python calc_stats.py spec.json --danger --targets '{"life":4000}'  # defense check + gear gap
+python character_auditor.py --account Lorne --char MyWitch  # deep audit
 python compare_builds.py --class-a Mercenary --asc-a "Gemling Legionnaire" \
   --class-b Mercenary --asc-b Witchhunter --targets "58714 29514"  # side-by-side
 python atlas_route.py --strategy expedition --level 40  # atlas tree planner
@@ -228,6 +239,86 @@ Store it as `POESESSID` environment variable or pass via `--session`.
 For the POESESSID: never log or display it. The user should set it as
 an environment variable: `export POESESSID=...`
 
+### Entry G: Crafting & Gear Planning
+
+When the user asks how to craft an item or plan gear:
+
+1. Load `references/crafting-basics.md` for crafting systems reference.
+2. Use `crafting_advisor.py`:
+   ```bash
+   python scripts/crafting_advisor.py --slot "<slot>" --desired-mods <mod1> <mod2> ...
+   python scripts/crafting_advisor.py --list-mods          # all mod tier breakpoints
+   python scripts/crafting_advisor.py --list-bases          # all item bases
+   python scripts/crafting_advisor.py --slot-bases "<slot>" # bases for a slot
+   ```
+3. The advisor returns: recommended base item, target iLvl, step-by-step
+   crafting process with currency costs, and alternatives (trade, Rog, Harvest).
+4. For item analysis: `python scripts/crafting_advisor.py --item <item.json>`
+   (JSON from `fetch_character.py` output).
+5. Key concepts: prefixes (up to 3), suffixes (up to 3), iLvl thresholds
+   for mod tiers, rune sockets via Artificer's Orbs.
+
+### Entry H: Unique Item Analysis
+
+When the user asks about unique items or build-around synergies:
+
+1. Ensure cache: `python scripts/fetch_unique_data.py --force`
+2. Use `unique_analyzer.py`:
+   ```bash
+   python scripts/unique_analyzer.py --unique "<name>"            # detailed lookup
+   python scripts/unique_analyzer.py --ascendancy "<name>"        # find synergies
+   python scripts/unique_analyzer.py --skill "<name>"             # skill synergies
+   python scripts/unique_analyzer.py --build "<description>"       # description match
+   python scripts/unique_analyzer.py --compare "<A>" "<B>"         # side-by-side
+   ```
+3. The analyzer scores uniques by: direct ascendancy synergy, mechanic overlap,
+   tag matching, archetype alignment.
+4. Load `references/unique-synergies.md` for common synergy patterns.
+5. In build design, integrate unique recommendations into the gear section.
+   Mark which slots use uniques vs rares — never sacrifice life/resists on
+   too many slots for unique effects.
+
+### Entry I: Gem Optimization
+
+When the user asks to optimize gem links or compare skills:
+
+1. Use `gem_analyzer.py` (extends `gem_linker.py`):
+   ```bash
+   python scripts/gem_analyzer.py --skill "<name>" --simulate-dps --links 5
+   python scripts/gem_analyzer.py --skill "<name>" --optimize-links 5
+   python scripts/gem_analyzer.py --skill "<name>" --check-requirements --str X --dex Y --int Z
+   python scripts/gem_analyzer.py --skill "<name>" --matrix       # full synergy matrix
+   python scripts/gem_analyzer.py --compare "<A>" "<B>"            # skill comparison
+   ```
+2. DPS simulation uses: base damage × effectiveness × APS × level scaling
+   × quality bonus × support multipliers.
+3. Support selection: greedy algorithm — best damage supports first,
+   then utility/defense. At most 4 pure damage supports to avoid
+   diminishing returns.
+4. Check attribute requirements: STR/DEX/INT scale with gem level (~5% more
+   per level). Flag gaps and suggest gear/passive solutions.
+
+### Entry J: Passive Tree Optimization
+
+When the user asks to optimize or audit their passive tree:
+
+1. Use `build_optimizer.py`:
+   ```bash
+   python scripts/build_optimizer.py --spec spec.json --travel-report
+   python scripts/build_optimizer.py --spec spec.json --find-clusters
+   python scripts/build_optimizer.py --spec spec.json --what-if <old> --replace-with <new>
+   python scripts/build_optimizer.py --spec spec.json --optimize-budget <max_points>
+   python scripts/build_optimizer.py --spec spec.json --consolidate
+   ```
+2. Travel report: analyzes travel node %, notables-per-travel ratio,
+   dead-end paths, and assigns efficiency grade (A-F).
+3. Cluster discovery: groups nearby notables into efficiency-scored clusters.
+   High-value clusters are compact notables with few travel nodes.
+4. Node swap simulation: "what if we drop X for Y?" — shows point savings
+   and connectivity impact.
+5. Budget optimization: removes lowest-value nodes to fit a point budget
+   while preserving connectivity.
+
 ## Generating the Build Output
 
 ```python
@@ -293,13 +384,28 @@ Always produce a structured summary containing:
    where to go for everything else.
 10. **Don't hardcode gear mods as facts.** Look up current mods on poe2db.tw
     each time. Mod pools change between leagues.
+11. **Use crafting_advisor.py for crafting plans**, not memorized recipes.
+    iLvl breakpoints, mod pool availability, and crafting costs shift.
+12. **Unique items: don't recommend more than 2-3 per build.** Uniques
+    trade stats for mechanics — rares fill life/resist gaps.
+13. **Never skip attribute requirement checks.** Gems scale requirements
+    with level — use `gem_analyzer.py --check-requirements`.
+14. **Homebrew is not a reliable installer on macOS.** If you get weird C++
+    compiler or OpenSSL errors when installing something, use pip in your
+    active venv, conda install, or nix profile install before trying
+    brew install. brew is a last resort.
 
 ## Verification Checklist
 
 - [ ] Tree data current (`python fetch_tree.py --stats`)
+- [ ] Unique data cached (`python fetch_unique_data.py --stats`)
 - [ ] All passives are real node IDs from data.json
-- [ ] Gem IDs verified from poe2db.tw
-- [ ] Gear mods sourced from poe2db.tw Mods
+- [ ] Gem IDs verified from poe2db.tw or gem_analyzer.py matrix
+- [ ] Attribute requirements checked (`--check-requirements`)
+- [ ] Gear mods sourced from poe2db.tw Mods or crafting_advisor.py
+- [ ] Crafting plans generated via crafting_advisor.py
+- [ ] Unique synergies analyzed via unique_analyzer.py
+- [ ] Tree travel efficiency graded (build_optimizer.py --travel-report)
 - [ ] All mechanics claims have source tags
 - [ ] `[ESTIMATED]` used where unverifiable
 - [ ] Resistance penalty accounted for
